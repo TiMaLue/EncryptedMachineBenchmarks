@@ -1,0 +1,18 @@
+# torch==1.9.0
+# scikit-learn==1.0.2
+# torchvision==0.10.0
+# crypten==0.4.0
+# numpy==1.22.3
+# pandas==1.4.2
+
+torch
+scikit-learn
+torchvision
+numpy
+pandas
+onnx2pytorch
+onnx
+attrs
+cattrs
+notebook
+matplotlib

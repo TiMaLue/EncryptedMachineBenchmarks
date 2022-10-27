@@ -1,0 +1,1 @@
+["resnet50.onnx", "googlenet.onnx", "shufflenet_v2_x0_5.onnx", "shufflenet_v2_x1_0.onnx", "resnext101_32x8d.onnx", "mobilenet_v2.onnx", "resnet18.onnx"]

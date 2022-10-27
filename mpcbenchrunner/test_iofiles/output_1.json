@@ -1,0 +1,8 @@
+{
+    "measurement_start_time_ms": 1660469973880,
+    "compressed_packet_stats": "H4sIANnC+GIC/61YW25rMQjcyl1AP4wxBtZSdf/buIDbj8axpWkipVHkwXN4w+nnZ/v4l3+/Pl/PzvKwT0TaGJGmTpD4UEhcO2QogX6BdGeCPMNskPiE2EeDdB9YDow5IHFzRFwIYheBkkAUMnViykyGTJ2YIxWLqmJRVYV0N7BvCKS7GVQejhWfY8XnWM5Qw+JEbTRMHksbao7xE2P2kndsKDDmny6YPt0wfibH5Afmf54Y/2jYGByM+X+g+jhmr4D+FMHsFTC+sxu2VoD+V9D/CvpfQf8bqI+B9WWG8XttgVU18/HGk9N1Z8zaBeLbH+88OV13LP3Um8URb7o9PV9A87/d4z8+T7nSkppm56epj3eP2Lrvmc99GFtaTDJke/gRXJtw59pwW6RKnPY++sZwBBfDzJnCIiz5i5330B7BxWCzFtsplX9DMssfGI5gMfSyYkzm1jKLOPPsN8MZXAwjPTl02MiFY9q0jeEILoaKpYhHlww3GbUtmGewGLheS2bz7mmqP7HiDC4Gllom1Swrg5rwZsYFXRz1LqUxOkfPtKEpWzgu6OJwrT2yD6ondeOtdi/oytvqFaoS22vmP4e6O8cRXRyS9WzNJmfgYv6OLSgX9Lt+srZN47Uu04fiJWYrkQtaHFK2RMzEsyNHydCmxwVdHNUHXVUHpZTSbssFXRxaetjsUQsppXuKXdDvbuC1SqqFRuk2730L7g1eLNUxqZk0zSWWfO4uucGLpeJLsSfJzB4bjdi3hL/Bi8XnWl5jXc+HRUNy2lnOcLFovZhHOzTpSRgtRfZRcIEL98yimGvRLzWDEDXivI+9M7xY0uWfEutsr9TOIbBZdIMXi5QuPNucWex9+N6Zb/BiSWe9ysKN5jtYhH/EtBIixPQpywFeLOrfYlFl+TCpwbKznOD1X6L2412tckuxp7qc4MWSI/l1llwuXmbpTd7BkovS6yzyFl2c38DCZO9gGa/q8vUfQSZRsRAWAAA=",
+    "transmitted_bytes": 53607300,
+    "transmitted_packets": 25007,
+    "acc": 0.9424,
+    "inference_time_s": 0.000594297
+}

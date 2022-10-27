@@ -1,0 +1,8 @@
+{
+  "scenario": "SimpleFFNN",
+  "protocol": "pond",
+  "world_size": "2",
+  "batch_size": "-1",
+  "plain_model_path": "bench_data/SimpleFFNN/saved-model.pb",
+  "dataset_folder_path": "bench_data/SimpleFFNN/datasets"
+}

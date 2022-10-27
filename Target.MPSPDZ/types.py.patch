@@ -1,0 +1,11 @@
+--- types.py    2022-08-15 21:41:05.000000000 +0000
++++ types.update.py     2022-08-26 00:01:07.665864105 +0000
+@@ -1638,7 +1638,7 @@
+
+     def _condition(self):
+         if program.options.binary:
+-            from GC.types import cbits
++            from .GC.types import cbits
+             return cbits.get_type(64)(self)
+         else:
+             return cint(self)

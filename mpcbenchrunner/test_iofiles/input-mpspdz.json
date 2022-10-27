@@ -1,0 +1,9 @@
+{
+  "target": "mpspdz",
+  "world_size": "3",
+  "scenario": "SimpleLogisticReg",
+  "batch_size": "-1",
+  "tc_delay": "-1",
+  "tc_rate": "10000",
+  "protocol": "shamir-party"
+}

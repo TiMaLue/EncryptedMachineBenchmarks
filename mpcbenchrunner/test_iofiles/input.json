@@ -1,0 +1,11 @@
+{
+  "target": "crypten",
+  "world_size": "2",
+  "scenario": "SimpleLogisticReg",
+  "plain_text": "0",
+  "batch_size": "-1",
+  "ttp": "0",
+  "mtu": "1000",
+  "tc_delay": "15",
+  "tc_rate": "10"
+}

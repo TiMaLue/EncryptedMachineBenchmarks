@@ -1,0 +1,8 @@
+{
+  "scenario": "image_cls/vgg16",
+  "protocol": "aby3",
+  "world_size": "3",
+  "batch_size": "2",
+  "plain_model_path": "bench_data/image_cls/vgg16.pb",
+  "dataset_folder_path": "bench_data/image_cls/datasets"
+}

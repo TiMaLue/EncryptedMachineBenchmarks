@@ -1,0 +1,20 @@
+mem.max = 16064
+cpu.max = 24
+
+keyfields = scenario:varchar(500),target:varchar(500),world_size:int,plain_text:int,batch_size:int,ttp:int,tc_delay:int,tc_rate:int
+
+scenario = image_cls/alexnet, image_cls/convnext_base, image_cls/convnext_large, image_cls/convnext_small, image_cls/convnext_tiny, image_cls/densenet121, image_cls/densenet161, image_cls/densenet169, image_cls/densenet201, image_cls/efficientnet_b0, image_cls/efficientnet_b1, image_cls/efficientnet_b2, image_cls/efficientnet_b3, image_cls/efficientnet_b4, image_cls/efficientnet_b5, image_cls/efficientnet_b6, image_cls/efficientnet_b7, image_cls/efficientnet_v2_l, image_cls/efficientnet_v2_m, image_cls/efficientnet_v2_s, image_cls/googlenet, image_cls/mnasnet0_5, image_cls/mnasnet0_75, image_cls/mnasnet1_0, image_cls/mnasnet1_3, image_cls/mobilenet_v2, image_cls/regnet_x_16gf, image_cls/regnet_x_1_6gf, image_cls/regnet_x_32gf, image_cls/regnet_x_3_2gf, image_cls/regnet_x_400mf, image_cls/regnet_x_800mf, image_cls/regnet_x_8gf, image_cls/regnet_y_16gf, image_cls/regnet_y_1_6gf, image_cls/regnet_y_32gf, image_cls/regnet_y_3_2gf, image_cls/regnet_y_400mf, image_cls/regnet_y_800mf, image_cls/regnet_y_8gf, image_cls/resnet101, image_cls/resnet152, image_cls/resnet18, image_cls/resnet34, image_cls/resnet50, image_cls/resnext101_32x8d, image_cls/resnext50_32x4d, image_cls/shufflenet_v2_x0_5, image_cls/shufflenet_v2_x1_0, image_cls/shufflenet_v2_x1_5, image_cls/shufflenet_v2_x2_0, image_cls/squeezenet1_0, image_cls/squeezenet1_1, image_cls/vgg11_bn, image_cls/vgg11, image_cls/vgg13_bn, image_cls/vgg13, image_cls/vgg16_bn, image_cls/vgg16, image_cls/vgg19_bn, image_cls/vgg19, image_cls/vit_b_16, image_cls/vit_b_32, image_cls/vit_l_16, image_cls/vit_l_32, image_cls/wide_resnet101_2, image_cls/wide_resnet50_2, image_cls_quant/googlenet, image_cls_quant/mobilenet_v2, image_cls_quant/resnet18, image_cls_quant/resnet50, image_cls_quant/resnext101_32x8d, image_cls_quant/shufflenet_v2_x0_5, image_cls_quant/shufflenet_v2_x1_0
+target = crypten
+world_size = 1, 2, 3, 4
+plain_text = 0, 1
+ttp = 0
+batch_size = 1
+tc_delay= -1
+tc_rate= -1
+
+resultfields = acc:float,loss:float,inference_time_s:float,transmitted_bytes:bigint,transmitted_packets:bigint,measurement_start_time_ms:long,compressed_packet_stats:LONGTEXT
+
+constraints = java:experiments.constraints.CryptenConstraints
+
+ignore.time = .*
+ignore.memory = .*

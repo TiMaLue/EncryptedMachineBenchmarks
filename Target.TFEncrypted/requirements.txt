@@ -1,0 +1,12 @@
+tf-encrypted == 0.7.0
+notebook
+tensorflow==1.15.5
+keras == 2.3.1
+numpy >=1.14.0
+pyyaml >=5.1
+tf-big ~=0.1.0
+onnx==1.11.0
+onnx_tf
+onnx2keras == 0.0.24
+cattrs
+attrs

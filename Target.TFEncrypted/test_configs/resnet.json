@@ -1,0 +1,8 @@
+{
+  "scenario": "image_cls/resnet50",
+  "protocol": "aby3",
+  "world_size": "2",
+  "batch_size": "-1",
+  "plain_model_path": "bench_data/image_cls/resnet50.pb",
+  "dataset_folder_path": "bench_data/image_cls/datasets"
+}

@@ -1,0 +1,7 @@
+db.driver = mysql
+db.host = localhost:3306
+db.username = <database user name>
+db.password = <database password of the user name>
+db.database = Benchmarks
+db.ssl = false
+db.table = PrivateInference

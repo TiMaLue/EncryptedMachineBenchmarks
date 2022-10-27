@@ -1,0 +1,14 @@
+[
+  {
+    "name": "crypten1",
+    "listen": "[::]:11000",
+    "upstream": "127.0.0.1:12000",
+    "enabled": true
+  },
+  {
+    "name": "crypten2",
+    "listen": "[::]:11001",
+    "upstream": "127.0.0.1:12001",
+    "enabled": true
+  }
+]

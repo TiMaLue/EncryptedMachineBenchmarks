@@ -1,0 +1,18 @@
+FROM ghcr.io/shopify/toxiproxy:2.4.0
+
+FROM ubuntu:22.04
+
+COPY --from=0  /toxiproxy /toxiproxy
+COPY --from=0  /toxiproxy-cli /toxiproxy-cli
+
+# Add Tini
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+STOPSIGNAL SIGKILL
+
+# Run toxiproxy under Tini
+CMD ["/toxiproxy", "-host=0.0.0.0", "-seed=42", "-config=/configs/toxiproxy.json", "-port=8474"]
+
+COPY configs/toxiproxy.json /configs/toxiproxy.json

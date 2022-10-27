@@ -1,0 +1,9 @@
+{
+    "measurement_start_time_ms": 1661475866114,
+    "compressed_packet_stats": "H4sIAB4cCGMC/6WM0QkAIQxDV3EAP5Kqrc4i7r/GWf9ODkEOWlqSl/SOGHxfM740FwmkG16AesMnUDxmmA+yxiCmVffs0V89DXme3JpVGhlDoSTbe47+AkD93TMeOS8YfGUBAAA=",
+    "transmitted_bytes": 499781711,
+    "transmitted_packets": 51237,
+    "acc": 0.954,
+    "loss": -1,
+    "inference_time_s": 0.00343531
+}

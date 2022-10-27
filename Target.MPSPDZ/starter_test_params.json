@@ -1,0 +1,8 @@
+{
+  "scenario": "SimpleFFNN",
+  "protocol": "replicated-ring-party.x",
+  "world_size": "3",
+  "batch_size": "100",
+  "plain_model_path": "/model",
+  "dataset_folder_path": "/datasets"
+}

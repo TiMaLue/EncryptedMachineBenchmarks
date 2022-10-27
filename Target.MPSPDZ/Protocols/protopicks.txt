@@ -1,0 +1,15 @@
+lowgear-party.x -> mal, dishonest maj
+
+cowgear-party.x -> cov, dishonest maj
+
+semi2k-party.x -> semi, dishonest maj
+
+sy-rep-ring-party.x -> mal, honest maj
+
+rep4-ring-party.x -> mal, super honest maj
+
+replicated-ring-party.x -> semi, dishonest maj
+
+dealer-ring-party.x -> semi, dishonest maj
+
+lowgear-party.x cowgear-party.x semi2k-party.x sy-rep-ring-party.x replicated-ring-party.x dealer-ring-party.x 

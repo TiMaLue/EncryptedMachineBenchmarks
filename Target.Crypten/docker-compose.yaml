@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  toxiproxy:
+    build:
+      dockerfile: Dockerfile.toxiproxy
+    # Ports are ignored when network mode is Host.
+    # ports:
+    #   - "127.0.0.1:8474:8474"
+    #   - "127.0.0.1:11000-11099:11000-11099"
+    network_mode: "host"
+  # redis:
+  #   image: "redis:alpine"

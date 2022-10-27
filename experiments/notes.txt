@@ -1,0 +1,11 @@
+https://starlibs.github.io/AILibs/projects/jaicore-experiments/
+
+Glue Code:
+Creates temp json file for inputs and outputs.
+Write test parameter in input file
+Write path of dataset and model into input file
+
+Start mpcbenchrunner with input file and output file paths
+
+If process stops, read output file and return experiment results.
+

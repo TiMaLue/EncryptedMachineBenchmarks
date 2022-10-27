@@ -1,0 +1,37 @@
+program.options_from_args()
+import os
+
+dataset_size = int(os.environ["DATASET_SIZE"])
+batch_size = int(os.environ["BATCH_SIZE"])
+
+test_samples = sfix.Tensor([dataset_size, 20])
+# test_labels = sint.Tensor([dataset_size, 1])
+
+# test_labels.input_from(0)
+test_samples.input_from(0)
+
+from Compiler import ml
+tf = ml
+
+layers = [
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(10, activation='relu'),
+    tf.keras.layers.Dense(5, activation='relu'),
+    tf.keras.layers.Dense(1,  activation="sigmoid")
+]
+
+model = tf.keras.models.Sequential(layers)
+# model.compile(('inference', [], {}))
+model.build((batch_size, 20, ), batch_size=batch_size)
+
+for layer in model.opt.layers:
+    print(str(layer.__dict__))
+    layer.input_from(1)
+
+
+guesses = model.predict(test_samples)
+
+print_ln('%s', guesses.reveal_nested())
+# print_ln('truth %s', test_labels.reveal_nested())
+
+# guesses.reveal_to_binary_output(0)

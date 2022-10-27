@@ -1,0 +1,8 @@
+protobuf==3.19.4
+onnx==1.11.0
+onnx_tf
+onnx2keras == 0.0.24
+cattrs
+attrs
+tf-big ~=0.1.0
+notebook

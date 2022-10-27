@@ -1,0 +1,8 @@
+
+# commonsnakes
+pyyaml
+attrs
+cattrs
+docker
+../commonsnakes
+python-dateutil

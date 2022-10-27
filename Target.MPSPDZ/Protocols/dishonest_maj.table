@@ -1,0 +1,17 @@
+| Program | Protocol | Domain | Security | Script |
+| --- | --- | --- | --- | --- |
+| `mascot-party.x` | [MASCOT](https://eprint.iacr.org/2016/505) | Mod prime | Malicious | `mascot.sh` |
+| `mama-party.x` | MASCOT* | Mod prime | Malicious | `mama.sh` |
+| `spdz2k-party.x` | [SPDZ2k](https://eprint.iacr.org/2018/482) | Mod 2^k | Malicious | `spdz2k.sh` |
+| `semi-party.x` | OT-based | Mod prime | Semi-honest | `semi.sh` |
+| `semi2k-party.x` | OT-based | Mod 2^k | Semi-honest | `semi2k.sh` |
+| `lowgear-party.x` | [LowGear](https://eprint.iacr.org/2017/1230) | Mod prime | Malicious | `lowgear.sh` |
+| `highgear-party.x` | [HighGear](https://eprint.iacr.org/2017/1230) | Mod prime | Malicious | `highgear.sh` |
+| `cowgear-party.x` | Adapted [LowGear](https://eprint.iacr.org/2017/1230) | Mod prime | Covert | `cowgear.sh` |
+| `chaigear-party.x` | Adapted [HighGear](https://eprint.iacr.org/2017/1230) | Mod prime | Covert | `chaigear.sh` |
+| `hemi-party.x` | Semi-homomorphic encryption | Mod prime | Semi-honest | `hemi.sh` |
+| `temi-party.x` | Adapted [CDN01](https://eprint.iacr.org/2000/055) | Mod prime | Semi-honest | `temi.sh` |
+| `soho-party.x` | Somewhat homomorphic encryption | Mod prime | Semi-honest | `soho.sh` |
+| `semi-bin-party.x` | OT-based | Binary | Semi-honest | `semi-bin.sh` |
+| `tiny-party.x` | Adapted SPDZ2k | Binary | Malicious | `tiny.sh` |
+| `tinier-party.x` | [FKOS15](https://eprint.iacr.org/2015/901) | Binary | Malicious | `tinier.sh` |

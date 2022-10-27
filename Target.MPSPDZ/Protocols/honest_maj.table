@@ -1,0 +1,21 @@
+| Program | Sharing | Domain | Malicious | \# parties | Script |
+| --- | --- | --- | --- | --- | --- |
+| `replicated-ring-party.x` | Replicated | Mod 2^k | N | 3 | `ring.sh` |
+| `brain-party.x` | Replicated | Mod 2^k | Y | 3 | `brain.sh` |
+| `ps-rep-ring-party.x` | Replicated | Mod 2^k | Y | 3 | `ps-rep-ring.sh` |
+| `malicious-rep-ring-party.x` | Replicated | Mod 2^k | Y | 3 | `mal-rep-ring.sh` |
+| `sy-rep-ring-party.x` | SPDZ-wise replicated | Mod 2^k | Y | 3 | `sy-rep-ring.sh` |
+| `rep4-ring-party.x` | Replicated | Mod 2^k | Y | 4 | `rep4-ring.sh` |
+| `replicated-bin-party.x` | Replicated | Binary | N | 3 | `replicated.sh` |
+| `malicious-rep-bin-party.x` | Replicated | Binary | Y | 3 | `mal-rep-bin.sh` |
+| `ps-rep-bin-party.x` | Replicated | Binary | Y | 3 | `ps-rep-bin.sh` |
+| `replicated-field-party.x` | Replicated | Mod prime | N | 3 | `rep-field.sh` |
+| `ps-rep-field-party.x` | Replicated | Mod prime | Y | 3 | `ps-rep-field.sh` |
+| `sy-rep-field-party.x` | SPDZ-wise replicated | Mod prime | Y | 3 | `sy-rep-field.sh` |
+| `malicious-rep-field-party.x` | Replicated | Mod prime | Y | 3 | `mal-rep-field.sh` |
+| `atlas-party.x` | [ATLAS](https://eprint.iacr.org/2021/833) | Mod prime | N | 3 or more | `atlas.sh` |
+| `shamir-party.x` | Shamir | Mod prime | N | 3 or more | `shamir.sh` |
+| `malicious-shamir-party.x` | Shamir | Mod prime | Y | 3 or more | `mal-shamir.sh` |
+| `sy-shamir-party.x` | SPDZ-wise Shamir | Mod prime | Y | 3 or more | `sy-shamir.sh` |
+| `ccd-party.x` | CCD/Shamir | Binary | N | 3 or more | `ccd.sh` |
+| `malicious-cdd-party.x` | CCD/Shamir | Binary | Y | 3 or more | `mal-ccd.sh` |

@@ -1,0 +1,4 @@
+
+| Program | Sharing | Domain | Malicious | \# parties | Script |
+| --- | --- | --- | --- | --- | --- |
+| `dealer-ring-party.x` | Additive | Mod 2^k | N | 3+ | `dealer-ring.sh` |
