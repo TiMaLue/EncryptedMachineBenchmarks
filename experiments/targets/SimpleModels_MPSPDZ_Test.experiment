@@ -1,0 +1,19 @@
+mem.max = 7840
+cpu.max = 8
+
+keyfields = scenario:varchar(500),target:varchar(500),protocol:varchar(500),world_size:int,batch_size:int,tc_delay:int,tc_rate:int
+
+scenario = SimpleFFNN, SimpleLogisticReg
+target = mpspdz
+protocol = mascot-party.x, mama-party.x, spdz2k-party.x, semi-party.x, semi2k-party.x
+world_size = 2, 3, 4
+batch_size = 1, 50
+tc_delay= -1, 1, 2, 5, 15, 50
+tc_rate= -1, 10000, 1000, 100, 10, 1
+
+resultfields = acc:float,loss:float,inference_time_s:float,transmitted_bytes:bigint,transmitted_packets:bigint,measurement_start_time_ms:long,compressed_packet_stats:LONGTEXT
+
+constraints = java:experiments.constraints.MPSPDZConstraints
+
+ignore.time = .*
+ignore.memory = .*
