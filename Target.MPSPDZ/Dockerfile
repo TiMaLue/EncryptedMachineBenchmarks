@@ -1,5 +1,7 @@
 FROM python:3.10.3-bullseye as mpcbuild
 
+ARG BOOST_VERSION=1.75.0
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
                 automake \
                 build-essential \
@@ -28,7 +30,7 @@ COPY --from=initc3/mpir:55fe6a9 /usr/local/mpir/share/info/* /usr/local/share/in
 
 ENV MP_SPDZ_HOME /usr/src/MP-SPDZ
 WORKDIR $MP_SPDZ_HOME
-RUN git clone --depth 1 --branch v0.3.3 https://github.com/data61/MP-SPDZ .
+RUN git clone --depth 1 --branch master https://github.com/data61/MP-SPDZ .
 #RUN git submodule init
 #RUN git submodule update
 #
@@ -59,6 +61,14 @@ RUN echo "ARCH = -march=${arch}" >> CONFIG.mine \
 ARG cryptoplayers=10
 ENV PLAYERS ${cryptoplayers}
 RUN ./Scripts/setup-ssl.sh ${cryptoplayers} ${ssl_dir}
+RUN cd /tmp && \
+    BOOST_VERSION_MOD=$(echo $BOOST_VERSION | tr . _) && \
+    wget https://archives.boost.io/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_MOD}.tar.bz2 && \
+    tar --bzip2 -xf boost_${BOOST_VERSION_MOD}.tar.bz2 && \
+    cd boost_${BOOST_VERSION_MOD} && \
+    ./bootstrap.sh --prefix=/usr/local && \
+    ./b2 install && \
+    rm -rf /tmp/*
 RUN make libote
 
 ARG gfp_mod_sz=2
@@ -107,7 +117,6 @@ WORKDIR /wd
 
 RUN $MP_SPDZ_HOME/Scripts/setup-ssl.sh 10 Player-Data
 
-RUN patch $MP_SPDZ_HOME/Compiler/types.py < ./types.py.patch
 
 #RUN $MP_SPDZ_HOME/compile.py SimpleFFNN
 #WORKDIR $MP_SPDZ_HOME
