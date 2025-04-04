@@ -8,3 +8,6 @@ runtime_configs/db.properties
 runtime_configs/mysql_passwd.env
 mpcbenchrunner/
 bin/
+
+experiments/runtime_configs/db.properties
+experiments/runtime_configs/mysql_passwd.env
