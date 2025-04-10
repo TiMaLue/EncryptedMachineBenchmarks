@@ -19,6 +19,8 @@ def resolve_model_path(target: str, scenario: str):
             model_path = "SimpleLogisticReg/model.onnx"
         if scenario == "SimpleFFNN":
             model_path = "SimpleFFNN/model.onnx"
+        if scenario == "thesis_lenet5":
+            model_path = "thesis_lenet5/LeNet5_ReLU.pth"
 
     if model_path is None:
         raise ValueError("Unrecognized scenario: " + scenario)
@@ -34,6 +36,8 @@ def resolve_dataset_path(scenario: str):
         data_path = "SimpleLogisticReg/datasets"
     if scenario == "SimpleFFNN":
         data_path = "SimpleFFNN/datasets"
+    if scenario == "thesis_lenet5":
+        data_path = "thesis_lenet5/datasets"
 
     if data_path is None:
         raise ValueError("Unrecognized scenario: " + scenario)

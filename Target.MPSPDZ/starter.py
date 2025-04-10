@@ -15,9 +15,11 @@ with open("Protocols/protos.json", "r") as fp:
 
 MP_SPDZ_HOME = os.environ["MP_SPDZ_HOME"]
 
+
 def exec(cmd):
     print("Executing: " + cmd)
     return os.system(cmd)
+
 
 class TargetParams:
     scenario: str
@@ -65,11 +67,11 @@ def write_model_data(weights_arr, biases_arr, fp):
         w = w.reshape((-1))
         assert len(b.shape) == 1
         for w_ in w:
-            print(w_, end=" ",file=fp)
+            print(w_, end=" ", file=fp)
             input_count += 1
         print(file=fp)
         for b_ in b:
-            print(b_, end=" ",file=fp)
+            print(b_, end=" ", file=fp)
             input_count += 1
         print(file=fp)
     return input_count
@@ -94,6 +96,7 @@ def write_model_data(weights_arr, biases_arr, fp):
     # weights_arr = model_data_arr_sorted[:3] # [numpy_helper.to_array(w) for w in weights_proto]
     # biases_arr = model_data_arr_sorted[3:]# [numpy_helper.to_array(b) for b in biases_proto]
 
+
 def read_model_weights_and_biases(model_path):
     model = onnx.load(model_path)
     model_data = list(model.graph.initializer)
@@ -102,11 +105,12 @@ def read_model_weights_and_biases(model_path):
     biases_arr = []
     for i in range(0, len(model_data_np), 2):
         weights_arr.append(model_data_np[i])
-        biases_arr.append(model_data_np[i+1])
+        biases_arr.append(model_data_np[i + 1])
     weights_arr = [w.transpose() for w in weights_arr]
     return weights_arr, biases_arr
 
-def translate_simpleffnn(model_path, fp ):
+
+def translate_simpleffnn(model_path, fp):
     weights_arr, biases_arr = read_model_weights_and_biases(model_path)
     expected_weight_shapes = [
         ((20, 10), (10,)),
@@ -117,10 +121,13 @@ def translate_simpleffnn(model_path, fp ):
         assert w.shape == expected_shape[0]
         assert b.shape == expected_shape[1]
     input_count = write_model_data(weights_arr, biases_arr, fp)
-    print(f"Wrote {input_count} inputs for pretrained model data of {model_path}", file=sys.stderr)
+    print(
+        f"Wrote {input_count} inputs for pretrained model data of {model_path}",
+        file=sys.stderr,
+    )
 
 
-def translate_simplelogisticreg(model_path, fp ):
+def translate_simplelogisticreg(model_path, fp):
     weights_arr, biases_arr = read_model_weights_and_biases(model_path)
     expected_weight_shapes = [
         ((2, 1), (1,)),
@@ -129,7 +136,14 @@ def translate_simplelogisticreg(model_path, fp ):
         assert w.shape == expected_shape[0]
         assert b.shape == expected_shape[1]
     input_count = write_model_data(weights_arr, biases_arr, fp)
-    print(f"Wrote {input_count} inputs for pretrained model data of {model_path}", file=sys.stderr)
+    print(
+        f"Wrote {input_count} inputs for pretrained model data of {model_path}",
+        file=sys.stderr,
+    )
+
+
+def translate_thesis_lenet5(model_path, fp):
+    return
 
 
 def prepare_input_data(target_params: TargetParams):
@@ -140,6 +154,8 @@ def prepare_input_data(target_params: TargetParams):
         model_translation_func = translate_simpleffnn
     elif "simplelogisticreg" in target_params.scenario.lower():
         model_translation_func = translate_simplelogisticreg
+    elif "thesis_lenet5" in target_params.scenario.lower():
+        model_translation_func = translate_thesis_lenet5
     else:
         raise RuntimeError("Unrecognized scenario: " + target_params.scenario)
     with open("Player-Data/Input-P1-0", "w") as fp:
@@ -152,6 +168,8 @@ def resolve_programm_name(target_params: TargetParams):
         return "SimpleFFNN"
     if "simplelogisticreg" in target_params.scenario.lower():
         return "SimpleLogisticReg"
+    if "thesis_lenet5" in target_params.scenario.lower():
+        return "thesis_lenet5"
 
 
 def resolve_mpsdpz_proto(target_params: TargetParams) -> Protocol:
@@ -187,9 +205,13 @@ def run_mpspdz_measure_time(target_params: TargetParams, dataset_size) -> float:
     prog = resolve_programm_name(target_params)
     if proto.party_num == -3:
         if target_params.world_size < 3:
-            raise ValueError("Expected at least 3 parties. Got: " + str(target_params.world_size))
+            raise ValueError(
+                "Expected at least 3 parties. Got: " + str(target_params.world_size)
+            )
     elif proto.party_num != -1 and target_params.world_size != proto.party_num:
-        raise ValueError(f"Expected at least {proto.party_num} parties. Got {target_params.world_size}")
+        raise ValueError(
+            f"Expected at least {proto.party_num} parties. Got {target_params.world_size}"
+        )
     cmd = f"{MP_SPDZ_HOME}/Scripts/{proto.script} {prog} -OF predictions"
     os.environ["PLAYERS"] = str(target_params.world_size)
     start_time = time.time()
@@ -198,6 +220,7 @@ def run_mpspdz_measure_time(target_params: TargetParams, dataset_size) -> float:
     running_time = time.time() - start_time
     return running_time / dataset_size
 
+
 def measure_acc(labels, dataset_size) -> float:
     # with open("predictions-P0-0", "r") as fp:
     #     print(fp.readlines())
@@ -205,8 +228,9 @@ def measure_acc(labels, dataset_size) -> float:
         predictions = json.load(fp)
     predictions = [(1.0 if pred >= 0.5 else 0.0) for pred in predictions]
     correct = sum((1 if pred == test else 0) for pred, test in zip(predictions, labels))
-    print(f"Got {correct}/{dataset_size}. Accuracy: {correct/dataset_size}")
-    return correct/dataset_size
+    print(f"Got {correct}/{dataset_size}. Accuracy: {correct / dataset_size}")
+    return correct / dataset_size
+
 
 def start(target_params: TargetParams, output_path: str):
     print("Preparing inputs.")
@@ -218,11 +242,7 @@ def start(target_params: TargetParams, output_path: str):
     inference_time = run_mpspdz_measure_time(target_params, dataset_size)
     print("Calculating accuracy.")
     acc = measure_acc(labels, dataset_size)
-    measurements = {
-        "acc": acc,
-        "inference_time_s": inference_time,
-        "loss": -1
-    }
+    measurements = {"acc": acc, "inference_time_s": inference_time, "loss": -1}
     print("Finished benchmark. Measurements: " + json.dumps(measurements, indent=4))
     with open(output_path, "w") as fp:
         json.dump(measurements, fp)
@@ -261,7 +281,9 @@ def load_from_params(str_params: dict[str, str], clz):
         try:
             return declared_type(attr_str_val)
         except Exception as ex:
-            print(f"Cannot cast custom value of {attr_name} of class {clz_}. Error: {ex}")
+            print(
+                f"Cannot cast custom value of {attr_name} of class {clz_}. Error: {ex}"
+            )
         return attr_str_val
 
     def set_params(instance__, clz_):
@@ -291,6 +313,4 @@ if __name__ == "__main__":
     print("Running benchmark with params: " + json.dumps(params, indent=2))
     output_path = sys.argv[2]
     target_params = load_from_params(params, TargetParams)
-    start(target_params,
-          output_path=output_path)
-
+    start(target_params, output_path=output_path)

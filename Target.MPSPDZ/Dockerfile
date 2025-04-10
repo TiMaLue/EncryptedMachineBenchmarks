@@ -61,6 +61,7 @@ RUN echo "ARCH = -march=${arch}" >> CONFIG.mine \
 ARG cryptoplayers=10
 ENV PLAYERS ${cryptoplayers}
 RUN ./Scripts/setup-ssl.sh ${cryptoplayers} ${ssl_dir}
+# build boost for libOTe
 RUN cd /tmp && \
     BOOST_VERSION_MOD=$(echo $BOOST_VERSION | tr . _) && \
     wget https://archives.boost.io/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_MOD}.tar.bz2 && \
@@ -70,6 +71,7 @@ RUN cd /tmp && \
     ./b2 install && \
     rm -rf /tmp/*
 RUN make libote
+
 
 ARG gfp_mod_sz=2
 RUN echo "MOD = -DGFP_MOD_SZ=${gfp_mod_sz}" >> CONFIG.mine
@@ -110,6 +112,10 @@ COPY --from=initc3/mpir:55fe6a9 /usr/local/mpir/share/info/* /usr/local/share/in
 COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 RUN rm /requirements.txt
+# scheduler
+RUN mkdir /scheduler
+COPY smpc_ml_staticscheduler-0.0.1.tar.gz /scheduler
+RUN pip install /scheduler/smpc_ml_staticscheduler-0.0.1.tar.gz
 
 RUN mkdir /wd
 COPY . /wd
