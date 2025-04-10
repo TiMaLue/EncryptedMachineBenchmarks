@@ -114,9 +114,11 @@ RUN pip install -r /requirements.txt
 RUN rm /requirements.txt
 # scheduler
 RUN mkdir /scheduler
-COPY smpc_ml_staticscheduler-0.0.1.tar.gz /scheduler
+COPY /scheduler/smpc_ml_staticscheduler-0.0.1.tar.gz /scheduler/
 RUN pip install /scheduler/smpc_ml_staticscheduler-0.0.1.tar.gz
 
+# load config into dockerfile
+COPY /scheduler/config.ini /scheduler/
 RUN mkdir /wd
 COPY . /wd
 WORKDIR /wd
