@@ -9,3 +9,5 @@ Start mpcbenchrunner with input file and output file paths
 
 If process stops, read output file and return experiment results.
 
+Quick delete of Experiment Results in DB:
+docker exec -it experiments-db-1 mysql -u benchuser -pbenchtest1234 -D Benchmarks -e "DELETE FROM Thesis_LeNet5_MPSPDZ"

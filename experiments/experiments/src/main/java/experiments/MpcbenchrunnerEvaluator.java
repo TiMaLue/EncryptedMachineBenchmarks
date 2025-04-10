@@ -22,7 +22,7 @@ public class MpcbenchrunnerEvaluator implements IExperimentSetEvaluator {
 	private static final Logger logger = LoggerFactory.getLogger(MpcbenchrunnerEvaluator.class);
 	private static final long PROCESS_WAIT_TIME_SEC = (int) (3600 / 2);
 
-	public static final String PYTHON_BINARY = "/home/tim/Development/EncryptedMachineBenchmarks/experiments/mpcbenchrunner/bin/python";
+	public static final String PYTHON_BINARY = "/data/Programmierung/Masterthesis/EncryptedMachineBenchmarks/experiments/mpcbenchrunner/bin/python";
 	private File prepareInputConfig(Map<String, String> experimentParams) throws IOException {
     	Gson gson = new Gson();
 		final File inputFile;
