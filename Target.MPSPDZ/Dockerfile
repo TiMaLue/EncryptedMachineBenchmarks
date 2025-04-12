@@ -61,13 +61,14 @@ RUN echo "ARCH = -march=${arch}" >> CONFIG.mine \
 ARG cryptoplayers=10
 ENV PLAYERS ${cryptoplayers}
 RUN ./Scripts/setup-ssl.sh ${cryptoplayers} ${ssl_dir}
+
 # build boost for libOTe
 RUN cd /tmp && \
     BOOST_VERSION_MOD=$(echo $BOOST_VERSION | tr . _) && \
     wget https://archives.boost.io/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_MOD}.tar.bz2 && \
     tar --bzip2 -xf boost_${BOOST_VERSION_MOD}.tar.bz2 && \
     cd boost_${BOOST_VERSION_MOD} && \
-    ./bootstrap.sh --prefix=/usr/local && \
+    ./bootstrap.sh --prefix=/usr/lib && \
     ./b2 install && \
     rm -rf /tmp/*
 RUN make libote
