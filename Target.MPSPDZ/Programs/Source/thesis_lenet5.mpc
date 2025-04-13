@@ -4,6 +4,7 @@ import torch
 from Models.LeNet5 import LeNet5_ReLU
 import configparser
 import os
+from torchvision.datasets import MNIST
 
 # load config
 program.options_from_args()
@@ -12,12 +13,19 @@ config.read("/scheduler/config.ini")
 
 dataset_size = int(os.environ["DATASET_SIZE"])
 batch_size = int(os.environ["BATCH_SIZE"])
-
+if 'notorch' in program.args:
 # normalize to [0,1] before input
-samples = sfix.Tensor([dataset_size, 28, 28])
-labels = sint.Tensor([dataset_size, 1])
-samples.input_from(0)
-labels.input_from(0)
+    samples = sfix.Tensor([dataset_size, 28, 28])
+    labels = sint.Tensor([dataset_size, 1])
+    samples.input_from(0)
+    labels.input_from(0)
+
+else:
+# data preprocessing
+    ds = MNIST(root=config["Dataset"]["RootDir"], train=False, download=True)
+# normalize to [0,1] before input
+    samples = sfix.input_tensor_via(0, ds.data / 255)
+    labels = sint.input_tensor_via(0, ds.targets, one_hot=True)
 
 # load model and read into MP-SPDZ
 lenet = LeNet5_ReLU()

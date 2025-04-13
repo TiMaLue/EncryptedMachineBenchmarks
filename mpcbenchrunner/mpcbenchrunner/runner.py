@@ -18,11 +18,16 @@ logger = logging.getLogger()
 
 
 class Volumes:
-
     def __init__(self, params: BenchParameters):
-        self.__packets_log = tempfile.NamedTemporaryFile(delete=Settings.delete_temp_files)
-        self.__runtime_meas = tempfile.NamedTemporaryFile(delete=Settings.delete_temp_files)
-        self.__runtime_params = tempfile.NamedTemporaryFile(delete=Settings.delete_temp_files)
+        self.__packets_log = tempfile.NamedTemporaryFile(
+            delete=Settings.delete_temp_files
+        )
+        self.__runtime_meas = tempfile.NamedTemporaryFile(
+            delete=Settings.delete_temp_files
+        )
+        self.__runtime_params = tempfile.NamedTemporaryFile(
+            delete=Settings.delete_temp_files
+        )
         if params.mode_is_priv_inference:
             self.__model_path = params.pretrained_model_path
             self.__dataset_path = params.dataset_folder_path
@@ -66,22 +71,26 @@ class Volumes:
     def mount_options(self) -> dict:
         mounts = {
             self.packets_log_file_path: {
-                "bind": self.packets_log_cnt_file_path, 'mode': 'rw'
+                "bind": self.packets_log_cnt_file_path,
+                "mode": "rw",
             },
             self.runtime_measurements_file_path: {
-                "bind": self.runtime_measurements_cnt_file_path, 'mode': 'rw'
+                "bind": self.runtime_measurements_cnt_file_path,
+                "mode": "rw",
             },
             self.runtime_params_file_path: {
-                "bind": self.runtime_params_cnt_file_path, 'mode': 'ro'
-            }
+                "bind": self.runtime_params_cnt_file_path,
+                "mode": "ro",
+            },
         }
         if self.__model_path is not None:
             mounts[self.__model_path] = {
-                "bind": self.pretrained_model_cnt_file_path, 'mode': 'ro'
+                "bind": self.pretrained_model_cnt_file_path,
+                "mode": "ro",
             }
         if self.__dataset_path is not None:
             mounts[self.__dataset_path] = {
-                "bind": self.datasets_cnt_dir_path, 'mode': 'ro'
+                "bind": self.datasets_cnt_dir_path  # , 'mode': 'ro'
             }
         return mounts
 
@@ -111,16 +120,33 @@ def run_container(params) -> (Container, Volumes):
     cont_env_vars = dict()
     cont_env_vars.update(get_tc_env_vars(params))
     # cmd = "watch -n 0.5 ip -s link show dev lo".split(" ")
-    logger.debug("running container %s with package log file: %s", params.image_name, packets_log.name)
-    logger.debug("Container volumes: %s", json.dumps(v.mount_options, indent=2, cls=CompactJSONEncoder))
-    logger.debug("Container env variables: %s", json.dumps(cont_env_vars, indent=2, cls=CompactJSONEncoder))
-    cont_: Container = docker_client.containers.run(params.image_name,
-                                                    detach=True, volumes=v.mount_options, cap_add=["NET_ADMIN"],
-                                                    environment=cont_env_vars, network_mode="none"
-                                                    #cpu_quota=1000000, cpu_period=100000,
-                                                    )
-    logger.debug(f"From image {cont_.image}, started container: {cont_.id}, {cont_.name}")
+    logger.debug(
+        "running container %s with package log file: %s",
+        params.image_name,
+        packets_log.name,
+    )
+    logger.debug(
+        "Container volumes: %s",
+        json.dumps(v.mount_options, indent=2, cls=CompactJSONEncoder),
+    )
+    logger.debug(
+        "Container env variables: %s",
+        json.dumps(cont_env_vars, indent=2, cls=CompactJSONEncoder),
+    )
+    cont_: Container = docker_client.containers.run(
+        params.image_name,
+        detach=True,
+        volumes=v.mount_options,
+        cap_add=["NET_ADMIN"],
+        environment=cont_env_vars,
+        network_mode="none",
+        # cpu_quota=1000000, cpu_period=100000,
+    )
+    logger.debug(
+        f"From image {cont_.image}, started container: {cont_.id}, {cont_.name}"
+    )
     return cont_, v
+
 
 def exec_package_log(cont: Container):
     command = ["/bin/watch_packets.bash", "100"]
@@ -128,26 +154,41 @@ def exec_package_log(cont: Container):
     time.sleep(0.5)
 
 
-def read_network_usage_measurements(packets_log_file_path: str) -> list[(int, list[int], list[int])]:
+def read_network_usage_measurements(
+    packets_log_file_path: str,
+) -> list[(int, list[int], list[int])]:
     with open(packets_log_file_path, "rb") as packets_log_file:
         lines = packets_log_file.readlines()
     entry_line_size = 7
     entries_count = len(lines) / entry_line_size
-    logger.debug("Packet logs has %s lines and thus %s entries", len(lines), entries_count)
+    logger.debug(
+        "Packet logs has %s lines and thus %s entries", len(lines), entries_count
+    )
     entries_count = int(entries_count)
 
     entries = []
     for i in range(0, len(lines), entry_line_size):
-        entry_lines = lines[i:i + entry_line_size]
+        entry_lines = lines[i : i + entry_line_size]
         if len(entry_lines) != entry_line_size:
-            logger.warning("Couldn't parse entry. Expected %s lines. Got: %s", entry_line_size, entry_lines)
+            logger.warning(
+                "Couldn't parse entry. Expected %s lines. Got: %s",
+                entry_line_size,
+                entry_lines,
+            )
             continue
         timestamp = int(entry_lines[0].decode("utf-8").strip())
-        rx_numbers = [int(m) for m in re.split(r'\D+', entry_lines[4].decode("utf-8"))[1:-1]]
-        tx_numbers = [int(m) for m in re.split(r'\D+', entry_lines[6].decode("utf-8"))[1:-1]]
+        rx_numbers = [
+            int(m) for m in re.split(r"\D+", entry_lines[4].decode("utf-8"))[1:-1]
+        ]
+        tx_numbers = [
+            int(m) for m in re.split(r"\D+", entry_lines[6].decode("utf-8"))[1:-1]
+        ]
         entries.append((timestamp, rx_numbers, tx_numbers))
     if len(entries) > 1:
-        logger.debug("Parsed packet log entries in the time span of %s ms", entries[-1][0] - entries[0][0])
+        logger.debug(
+            "Parsed packet log entries in the time span of %s ms",
+            entries[-1][0] - entries[0][0],
+        )
     return entries
 
 
@@ -165,10 +206,15 @@ def run_protocol(params: BenchParameters, container: Container, volumes: Volumes
 
     with open(volumes.runtime_params_file_path, "w") as fp:
         json.dump(runtime_params, fp)
-    logger.info("Running protocol with params: %s", json.dumps(runtime_params, indent=2, cls=CompactJSONEncoder))
-    docker_exec_cmd = f"./starter.sh" \
-                      f" {volumes.runtime_params_cnt_file_path}" \
-                      f" {volumes.runtime_measurements_cnt_file_path}"
+    logger.info(
+        "Running protocol with params: %s",
+        json.dumps(runtime_params, indent=2, cls=CompactJSONEncoder),
+    )
+    docker_exec_cmd = (
+        f"./starter.sh"
+        f" {volumes.runtime_params_cnt_file_path}"
+        f" {volumes.runtime_measurements_cnt_file_path}"
+    )
 
     exit_code = os.system(f"docker exec -i {container.id} {docker_exec_cmd}")
     # res = container.exec_run(docker_exec_cmd,
@@ -192,7 +238,11 @@ def compress_packet_stats(packet_stats):
         filtered_packets.append(packet_stats[int(index)])
         index += step_size
 
-    logger.debug("Filtered %s packets into %s many packets.", len(packet_stats), len(filtered_packets))
+    logger.debug(
+        "Filtered %s packets into %s many packets.",
+        len(packet_stats),
+        len(filtered_packets),
+    )
     return filtered_packets
 
 
@@ -213,7 +263,11 @@ if __name__ == "__main__":
     input_file_path = argv[1]
     output_file_path = argv[2]
     params = BenchParameters.load(input_file_path)
-    logger.debug("Starting mpc bench runner with input file: %s and output file: %s", input_file_path, output_file_path)
+    logger.debug(
+        "Starting mpc bench runner with input file: %s and output file: %s",
+        input_file_path,
+        output_file_path,
+    )
     logger.debug("Benchmark params: %s", params)
     cont = None
     try:
@@ -225,10 +279,14 @@ if __name__ == "__main__":
         packet_stats = compress_packet_stats(packet_stats)
         update_with_packet_stats(protocol_measurements, packet_stats)
         with open(output_file_path, "w") as fp:
-            json.dump(cattrs.unstructure(protocol_measurements), fp, cls=utils.CompactJSONEncoder)
+            json.dump(
+                cattrs.unstructure(protocol_measurements),
+                fp,
+                cls=utils.CompactJSONEncoder,
+            )
     finally:
         logger.error("Run interrupted.")
         if cont is not None:
             exit_code = os.system(f"docker stop -t 0 {cont.id}")
             logger.info("Docker stop issued.")
-            
+

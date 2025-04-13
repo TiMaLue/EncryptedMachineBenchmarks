@@ -52,6 +52,8 @@ def translate_dataset(source_datasets_path: str, fp):
     #     print(int(label[0]), end=" ", file=fp)
     #     count += 1
     # print(file=fp)
+    # print(f"DEBUG - Features: {features}")
+    # print(f"DEBUG - Labels: {labels}")
     for instance in features:
         for feat in instance:
             print(feat, end=" ", file=fp)
