@@ -20,7 +20,7 @@ def resolve_model_path(target: str, scenario: str):
         if scenario == "SimpleFFNN":
             model_path = "SimpleFFNN/model.onnx"
         if scenario == "thesis_lenet5":
-            model_path = "thesis_lenet5/LeNet5_ReLU.pth"
+            model_path = "thesis_lenet5/model"
 
     if model_path is None:
         raise ValueError("Unrecognized scenario: " + scenario)

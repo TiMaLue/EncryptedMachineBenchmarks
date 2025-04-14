@@ -1,7 +1,7 @@
 from Compiler import ml
 from Compiler.types import sfix, sint
 import torch
-from Models.LeNet5 import LeNet5_ReLU
+from Models.LeNet5 import LeNet5_MPSPDZ as LeNet5
 import configparser
 import os
 from torchvision.datasets import MNIST
@@ -25,17 +25,17 @@ if 'notorch' in program.args:
 else:
 # data preprocessing
     ds = MNIST(root=config["Dataset"]["RootDir"], train=False, download=True)
-    short_ds = ds.data[dataset_size]
+    short_ds = ds.data[:dataset_size]
 # normalize to [0,1] before input
     samples = sfix.input_tensor_via(0, short_ds / 255.)
     labels = sint.input_tensor_via(0, ds.targets, one_hot=True)
 
 # load model and read into MP-SPDZ
-lenet = LeNet5_ReLU()
+lenet = LeNet5()
 save_path = "".join(
     [config["Models"]["SaveDir"], lenet.model_name, config["Models"]["Postfix"]]
 )
-lenet.load_state_dict(torch.load(save_path, weights_only=True, map_location=torch.device('cpu')))
+lenet.load_state_dict(torch.load(save_path, weights_only=True)) 
 layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
 
 ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
