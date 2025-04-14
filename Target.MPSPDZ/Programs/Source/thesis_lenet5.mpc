@@ -12,7 +12,9 @@ config = configparser.ConfigParser()
 config.read("/scheduler/config.ini")
 
 dataset_size = int(os.environ["DATASET_SIZE"])
-batch_size = int(os.environ["BATCH_SIZE"])
+#batch_size = int(os.environ["BATCH_SIZE"])
+batch_size = 32
+dataset_size = 96
 if 'notorch' in program.args:
 # normalize to [0,1] before input
     samples = sfix.Tensor([dataset_size, 28, 28])
@@ -23,8 +25,9 @@ if 'notorch' in program.args:
 else:
 # data preprocessing
     ds = MNIST(root=config["Dataset"]["RootDir"], train=False, download=True)
+    short_ds = ds.data[dataset_size]
 # normalize to [0,1] before input
-    samples = sfix.input_tensor_via(0, ds.data / 255)
+    samples = sfix.input_tensor_via(0, short_ds / 255.)
     labels = sint.input_tensor_via(0, ds.targets, one_hot=True)
 
 # load model and read into MP-SPDZ
