@@ -14,7 +14,7 @@ config.read("/scheduler/config.ini")
 dataset_size = int(os.environ["DATASET_SIZE"])
 #batch_size = int(os.environ["BATCH_SIZE"])
 batch_size = 32
-dataset_size = 96
+dataset_size = 5
 if 'notorch' in program.args:
 # normalize to [0,1] before input
     samples = sfix.Tensor([dataset_size, 28, 28])
@@ -36,7 +36,7 @@ save_path = "".join(
     [config["Models"]["SaveDir"], lenet.model_name, config["Models"]["Postfix"]]
 )
 lenet.load_state_dict(torch.load(save_path, weights_only=True)) 
-layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
+layers = ml.layers_from_torch(lenet, samples.shape, batch_size, input_via=1)
 
 ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
 
