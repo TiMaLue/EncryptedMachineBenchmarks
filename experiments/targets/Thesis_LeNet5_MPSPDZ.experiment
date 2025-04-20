@@ -1,4 +1,4 @@
-mem.max = 3600
+mem.max = 16080
 cpu.max = 8
 
 keyfields = scenario:varchar(500),target:varchar(500),protocol:varchar(500),world_size:int,batch_size:int,tc_delay:int,tc_rate:int
