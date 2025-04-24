@@ -36,7 +36,7 @@ save_path = "".join(
     [config["Models"]["SaveDir"], lenet.model_name, config["Models"]["Postfix"]]
 )
 lenet.load_state_dict(torch.load(save_path, weights_only=True)) 
-layers = ml.layers_from_torch(lenet, samples.shape, batch_size, input_via=1)
+layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
 
 ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
 
