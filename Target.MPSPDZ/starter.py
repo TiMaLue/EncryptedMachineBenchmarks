@@ -228,7 +228,7 @@ def measure_acc(labels, dataset_size) -> float:
     #     print(fp.readlines())
     with open("predictions-P0-0", "r") as fp:
         # predictions = json.load(fp)
-        pred_string = fp.readlines()[2]
+        pred_string = fp.readlines()[1]
     print(f"Read predictions: {pred_string}")
     predictions = np.fromstring(pred_string)
     print(f"Converted to np array: {predictions}")
