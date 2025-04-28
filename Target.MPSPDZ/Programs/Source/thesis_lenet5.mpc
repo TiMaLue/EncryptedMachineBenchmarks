@@ -14,7 +14,7 @@ config.read("/scheduler/config.ini")
 dataset_size = int(os.environ["DATASET_SIZE"])
 #batch_size = int(os.environ["BATCH_SIZE"])
 batch_size = 32
-dataset_size = 5
+dataset_size = 50
 if 'notorch' in program.args:
 # normalize to [0,1] before input
     samples = sfix.Tensor([dataset_size, 28, 28])
