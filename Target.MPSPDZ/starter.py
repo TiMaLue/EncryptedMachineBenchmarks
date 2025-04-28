@@ -241,7 +241,11 @@ def measure_acc(labels, dataset_size) -> float:
 def read_acc():
     with open("predictions-P0-0", "r") as fp:
         # predictions = json.load(fp)
-        pred_string = fp.readlines()[2]
+        # pred_string = fp.readlines()[2]
+        pred_string = "-1.0"
+        for line in fp:
+            if line.startswith("Accuracy:"):
+                pred_string = line.split(":")[1]
     acc = float(pred_string)
     return acc
 
