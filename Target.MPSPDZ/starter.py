@@ -243,11 +243,19 @@ def read_acc():
         # predictions = json.load(fp)
         # pred_string = fp.readlines()[2]
         pred_string = "-1.0"
+        loss_string = "-1"
+        num_correct_string = "-1"
         for line in fp:
             if line.startswith("Accuracy:"):
                 pred_string = line.split(":")[1]
+            if line.startswith("Loss:"):
+                loss_string = line.split(":")[1]
+            if line.startswith("Correct:"):
+                num_correct_string = line.split(":")[1]
     acc = float(pred_string)
-    return acc
+    loss = float(loss_string)
+    num_correct = int(num_correct_string)
+    return acc, loss, num_correct
 
 
 def start(target_params: TargetParams, output_path: str):
@@ -260,8 +268,13 @@ def start(target_params: TargetParams, output_path: str):
     inference_time = run_mpspdz_measure_time(target_params, dataset_size)
     print("Calculating accuracy.")
     # acc = measure_acc(labels, dataset_size)
-    acc = read_acc()
-    measurements = {"acc": acc, "inference_time_s": inference_time, "loss": -1}
+    acc, loss, num_correct = read_acc()
+    measurements = {
+        "acc": acc,
+        "inference_time_s": inference_time,
+        "loss": loss,
+        "num_correct": num_correct,
+    }
     print("Finished benchmark. Measurements: " + json.dumps(measurements, indent=4))
     with open(output_path, "w") as fp:
         json.dump(measurements, fp)
