@@ -238,6 +238,14 @@ def measure_acc(labels, dataset_size) -> float:
     return correct / dataset_size
 
 
+def read_acc():
+    with open("predictions-P0-0", "r") as fp:
+        # predictions = json.load(fp)
+        pred_string = fp.readlines()[1]
+    acc = float(pred_string)
+    return acc
+
+
 def start(target_params: TargetParams, output_path: str):
     print("Preparing inputs.")
     features, labels = prepare_input_data(target_params)
@@ -247,7 +255,8 @@ def start(target_params: TargetParams, output_path: str):
     print("Starting mpspedz benchmark.")
     inference_time = run_mpspdz_measure_time(target_params, dataset_size)
     print("Calculating accuracy.")
-    acc = measure_acc(labels, dataset_size)
+    # acc = measure_acc(labels, dataset_size)
+    acc = read_acc()
     measurements = {"acc": acc, "inference_time_s": inference_time, "loss": -1}
     print("Finished benchmark. Measurements: " + json.dumps(measurements, indent=4))
     with open(output_path, "w") as fp:
