@@ -30,7 +30,7 @@ COPY --from=initc3/mpir:55fe6a9 /usr/local/mpir/share/info/* /usr/local/share/in
 
 ENV MP_SPDZ_HOME /usr/src/MP-SPDZ
 WORKDIR $MP_SPDZ_HOME
-RUN git clone --depth 1 --branch master https://github.com/data61/MP-SPDZ .
+RUN git clone --depth 1 --branch scheduler https://github.com/TiMaLue/MP-SPDZ .
 #RUN git submodule init
 #RUN git submodule update
 #
