@@ -230,8 +230,8 @@ def measure_acc(labels, dataset_size) -> float:
         # predictions = json.load(fp)
         pred_string = fp.readlines()[1]
     print(f"Read predictions: {pred_string}")
-    predictions = np.fromstring(pred_string)
-    print(f"Converted to np array: {predictions}")
+    predictions = json.loads(pred_string)
+    print(f"Converted to list: {predictions}")
     predictions = [(1.0 if pred >= 0.5 else 0.0) for pred in predictions]
     correct = sum((1 if pred == test else 0) for pred, test in zip(predictions, labels))
     print(f"Got {correct}/{dataset_size}. Accuracy: {correct / dataset_size}")
