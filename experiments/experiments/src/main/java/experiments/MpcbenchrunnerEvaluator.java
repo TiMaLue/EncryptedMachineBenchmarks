@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class MpcbenchrunnerEvaluator implements IExperimentSetEvaluator {
 
   private static final Logger logger = LoggerFactory.getLogger(MpcbenchrunnerEvaluator.class);
-  private static final long PROCESS_WAIT_TIME_SEC = (int) (3600 / 2);
+  private static final long PROCESS_WAIT_TIME_SEC = (int) (7200 / 1);
 
   public static final String PYTHON_BINARY = "../mpcbenchrunner/bin/python";
 
