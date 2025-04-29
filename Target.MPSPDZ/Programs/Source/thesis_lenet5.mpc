@@ -36,6 +36,24 @@ save_path = "".join(
     [config["Models"]["SaveDir"], lenet.model_name, config["Models"]["Postfix"]]
 )
 lenet.load_state_dict(torch.load(save_path, weights_only=True)) 
+
+# test model in plaintext first
+test_loader = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=True)
+
+# test loop
+correct = 0
+total = 0
+
+with torch.no_grad():
+    for data in test_loader:
+        inputs, labels = data
+        outputs = lenet()
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print(f"Plaintext accuracy on {total} predictions: {correct / total}")
+
 layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
 
 ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
