@@ -5,6 +5,7 @@ from Models.LeNet5 import LeNet5_MPSPDZ as LeNet5
 import configparser
 import os
 from torchvision.datasets import MNIST
+from torchvision import transforms
 
 # load config
 program.options_from_args()
@@ -24,7 +25,7 @@ if 'notorch' in program.args:
 
 else:
 # data preprocessing
-    ds = MNIST(root=config["Dataset"]["RootDir"], train=False, download=True)
+    ds = MNIST(root=config["Dataset"]["RootDir"], train=False, download=True, transforms.ToTensor())
     short_ds = ds.data[:dataset_size]
 # normalize to [0,1] before input
     samples = sfix.input_tensor_via(0, short_ds / 255.)
