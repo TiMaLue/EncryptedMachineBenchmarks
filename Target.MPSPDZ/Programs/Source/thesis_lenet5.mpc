@@ -46,12 +46,12 @@ correct = 0
 total = 0
 
 with torch.no_grad():
-    for data in test_loader:
-        inputs, labels = data
-        outputs = lenet(inputs)
+    for plain_data in test_loader:
+        plain_inputs, plain_labels = plain_data
+        outputs = lenet(plain_inputs)
         _, predicted = torch.max(outputs, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
+        total += plain_labels.size(0)
+        correct += (predicted == plain_labels).sum().item()
 
 print(f"Plaintext accuracy on {total} predictions: {correct / total}")
 
