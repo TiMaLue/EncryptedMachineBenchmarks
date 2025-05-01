@@ -242,20 +242,24 @@ def read_acc():
     with open("predictions-P0-0", "r") as fp:
         # predictions = json.load(fp)
         # pred_string = fp.readlines()[2]
+        acc_plain_string = "-1.0"
         pred_string = "-1.0"
         loss_string = "-1"
         num_correct_string = "-1"
         for line in fp:
+            if line.startswith("PlaintextAcc:"):
+                acc_plain_string = line.split(":")[1]
             if line.startswith("Accuracy:"):
                 pred_string = line.split(":")[1]
             if line.startswith("Loss:"):
                 loss_string = line.split(":")[1]
             if line.startswith("Correct:"):
                 num_correct_string = line.split(":")[1]
+    acc_plain = float(acc_plain_string)
     acc = float(pred_string)
     loss = float(loss_string)
     num_correct = int(num_correct_string)
-    return acc, loss, num_correct
+    return acc, loss, num_correct, acc_plain
 
 
 def start(target_params: TargetParams, output_path: str):
@@ -268,8 +272,9 @@ def start(target_params: TargetParams, output_path: str):
     inference_time = run_mpspdz_measure_time(target_params, dataset_size)
     print("Calculating accuracy.")
     # acc = measure_acc(labels, dataset_size)
-    acc, loss, num_correct = read_acc()
+    acc, loss, num_correct, acc_plain = read_acc()
     measurements = {
+        "plaintext_acc": acc_plain,
         "acc": acc,
         "inference_time_s": inference_time,
         "loss": loss,

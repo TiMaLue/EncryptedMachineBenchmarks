@@ -11,7 +11,7 @@ batch_size = 1, 50
 tc_delay= -1, 1, 2, 5, 15, 50
 tc_rate= -1, 10000, 1000, 100, 10, 1
 
-resultfields = acc:float,loss:float,inference_time_s:float,transmitted_bytes:bigint,transmitted_packets:bigint,measurement_start_time_ms:long,compressed_packet_stats:LONGTEXT, num_correct:int
+resultfields = acc:float,loss:float,inference_time_s:float,transmitted_bytes:bigint,transmitted_packets:bigint,measurement_start_time_ms:long,compressed_packet_stats:LONGTEXT, num_correct:int, plaintext_acc:float
 
 constraints = java:experiments.constraints.MPSPDZConstraints
 

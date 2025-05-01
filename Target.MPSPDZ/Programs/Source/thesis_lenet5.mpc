@@ -53,7 +53,7 @@ with torch.no_grad():
         total += plain_labels.size(0)
         correct += (predicted == plain_labels).sum().item()
 
-print(f"Plaintext accuracy on {total} predictions: {correct / total}")
+print_ln(f"PlaintextAcc:{correct / total}")
 
 layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
 
