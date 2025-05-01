@@ -28,7 +28,7 @@ else:
     ds = MNIST(root=config["Dataset"]["RootDir"], train=False, download=True, transform=transforms.ToTensor())
     short_ds = ds.data[:dataset_size]
 # normalize to [0,1] before input
-    samples = sfix.input_tensor_via(0, short_ds / 255.)
+    samples = sfix.input_tensor_via(0, short_ds) 
     labels = sint.input_tensor_via(0, ds.targets, one_hot=True)
 
 # load model and read into MP-SPDZ
