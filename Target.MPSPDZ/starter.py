@@ -198,6 +198,7 @@ def compile_prog(target_params: TargetParams, dataset_size: int):
     if proto.is_prime:
         cmd += " -F 64"
     cmd += f" {prog}"
+    print(f"Compile command: {cmd}")
     exit_code = exec(cmd)
     assert exit_code == 0
 
@@ -216,6 +217,7 @@ def run_mpspdz_measure_time(target_params: TargetParams, dataset_size) -> float:
         )
     cmd = f"{MP_SPDZ_HOME}/Scripts/{proto.script} {prog} -OF predictions"
     os.environ["PLAYERS"] = str(target_params.world_size)
+    print(f"Run command: {cmd}")
     start_time = time.time()
     exit_code = exec(cmd)
     assert exit_code == 0
