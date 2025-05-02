@@ -39,7 +39,7 @@ save_path = "".join(
 lenet.load_state_dict(torch.load(save_path, weights_only=True)) 
 
 # test model in plaintext first
-test_loader = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=True)
+test_loader = torch.utils.data.DataLoader(short_ds, batch_size=batch_size, shuffle=False)
 
 # test loop
 correct = 0
