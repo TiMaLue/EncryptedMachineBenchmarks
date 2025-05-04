@@ -7,7 +7,7 @@ import os
 from torchvision.datasets import MNIST
 from torchvision import transforms
 import numpy as np
-from torch.utils.data import Subset
+from torch.utils.data import Dataset, Subset
 
 # load config
 program.options_from_args()
@@ -36,12 +36,12 @@ else:
         transform=transforms.ToTensor(),
     )
     indices = np.arange(dataset_size)
-    partial_ds = Subset(ds, indices)
-    short_ds = ds.data[:dataset_size]
-    short_labels = ds.targets[:dataset_size]
+    partial_ds: Subset[Dataset[MNIST]] = Subset(ds, indices)
+    partial_samples = ds.data[indices]
+    partial_labels = ds.targets[indices]
     # normalize to [0,1] before input
-    samples = sfix.input_tensor_via(0, short_ds / 255)
-    labels = sint.input_tensor_via(0, short_labels, one_hot=True)
+    samples = sfix.input_tensor_via(0, partial_samples / 255)
+    labels = sint.input_tensor_via(0, partial_labels, one_hot=True)
 
 # load model and read into MP-SPDZ
 lenet = LeNet5()
