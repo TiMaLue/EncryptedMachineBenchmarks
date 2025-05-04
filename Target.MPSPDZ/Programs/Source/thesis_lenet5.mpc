@@ -12,9 +12,9 @@ from torch.utils.data import Dataset, Subset
 # load config
 program.options_from_args()
 config = configparser.ConfigParser()
-config.read("/scheduler/config.ini")
-# print_ln("Reading config: %s", program.args[1])
-# config.read(program.args[1])
+# config.read("/scheduler/config.ini")
+print_ln("Reading config: %s", program.args[1])
+config.read(program.args[1])
 
 # dataset_size = int(os.environ["DATASET_SIZE"])
 # batch_size = int(os.environ["BATCH_SIZE"])
@@ -74,7 +74,7 @@ layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
 
 ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
 
-optimizer = ml.SGD(layers)
+optimizer = ml.Optimizer(layers)
 n_correct, loss = optimizer.reveal_correctness(
     samples, labels, batch_size, running=False
 )
