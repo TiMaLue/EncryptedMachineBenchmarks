@@ -215,6 +215,8 @@ def run_protocol(params: BenchParameters, container: Container, volumes: Volumes
         f" {volumes.runtime_params_cnt_file_path}"
         f" {volumes.runtime_measurements_cnt_file_path}"
     )
+    if params.scheduler_config_path:
+        docker_exec_cmd += f" {params.scheduler_config_path}"
 
     exit_code = os.system(f"docker exec -i {container.id} {docker_exec_cmd}")
     # res = container.exec_run(docker_exec_cmd,
@@ -289,4 +291,3 @@ if __name__ == "__main__":
         if cont is not None:
             exit_code = os.system(f"docker stop -t 0 {cont.id}")
             logger.info("Docker stop issued.")
-

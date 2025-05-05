@@ -30,6 +30,10 @@ class TargetParams:
     batch_size: int
 
 
+class SchedulerParams:
+    config_path: str
+
+
 class Protocol(NamedTuple):
     id_: str
     name: str
@@ -180,7 +184,9 @@ def resolve_mpsdpz_proto(target_params: TargetParams) -> Protocol:
             return Protocol(**proto_)
 
 
-def compile_prog(target_params: TargetParams, dataset_size: int):
+def compile_prog(
+    target_params: TargetParams, dataset_size: int, scheduler_config_path: str
+):
     prog = resolve_programm_name(target_params)
     proto = resolve_mpsdpz_proto(target_params)
     if proto is None:
@@ -198,6 +204,8 @@ def compile_prog(target_params: TargetParams, dataset_size: int):
     if proto.is_prime:
         cmd += " -F 64"
     cmd += f" {prog}"
+    if scheduler_config_path:
+        cmd += f" {scheduler_config_path}"
     print(f"Compile command: {cmd}")
     exit_code = exec(cmd)
     assert exit_code == 0
@@ -264,12 +272,12 @@ def read_acc():
     return acc, loss, num_correct, acc_plain
 
 
-def start(target_params: TargetParams, output_path: str):
+def start(target_params: TargetParams, output_path: str, scheduler_config_path: str):
     print("Preparing inputs.")
     features, labels = prepare_input_data(target_params)
     dataset_size = len(labels)
     print("Compiling prog.")
-    compile_prog(target_params, dataset_size)
+    compile_prog(target_params, dataset_size, scheduler_config_path)
     print("Starting mpspedz benchmark.")
     inference_time = run_mpspdz_measure_time(target_params, dataset_size)
     print("Calculating accuracy.")
@@ -340,8 +348,8 @@ def load_from_params(str_params: dict[str, str], clz):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Expected 2 inputs got: {}".format(len(sys.argv) - 1))
+    if len(sys.argv) != 4:
+        print("Expected 3 inputs got: {}".format(len(sys.argv) - 1))
         exit(1)
     param_path = sys.argv[1]
     with open(param_path, "r") as fp:
@@ -351,5 +359,10 @@ if __name__ == "__main__":
         exit(1)
     print("Running benchmark with params: " + json.dumps(params, indent=2))
     output_path = sys.argv[2]
+    scheduler_config_path = sys.argv[3]
     target_params = load_from_params(params, TargetParams)
-    start(target_params, output_path=output_path)
+    start(
+        target_params,
+        output_path=output_path,
+        scheduler_config_path=scheduler_config_path,
+    )

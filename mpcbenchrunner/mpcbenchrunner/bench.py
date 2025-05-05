@@ -15,12 +15,12 @@ from mpcbenchrunner.utils import Settings
 
 logger = logging.getLogger()
 
-class BenchModes:
 
+class BenchModes:
     priv_inference = "PrivateInference"
 
-class BenchParameters:
 
+class BenchParameters:
     params: dict[str, str]
 
     def __init__(self, params: dict[str, str]):
@@ -79,7 +79,9 @@ class BenchParameters:
         if self.mode_is_priv_inference:
             return param_mapping.resolve_docker_image(self.target)
         else:
-            raise RuntimeError("No image for mode: " + self.benchmark_mode + ". Params: " + str(self))
+            raise RuntimeError(
+                "No image for mode: " + self.benchmark_mode + ". Params: " + str(self)
+            )
 
     @property
     def mode_is_priv_inference(self) -> bool:
@@ -99,6 +101,9 @@ class BenchParameters:
         else:
             raise RuntimeError("No dataset for mode: " + self.benchmark_mode)
 
+    @property
+    def scheduler_config_path(self) -> str:
+        return self.params.get("scheduler_config_path", "")
 
 
 @attrs.define
@@ -112,11 +117,14 @@ class Measurements:
     inference_time_s: float
 
 
-def update_with_packet_stats(measurements: dict, packet_stats: list, ):
+def update_with_packet_stats(
+    measurements: dict,
+    packet_stats: list,
+):
     start_time = packet_stats[0][0]
     transmit_bytes = packet_stats[-1][1][0]
     transmit_packets = packet_stats[-1][1][1]
-    packet_stats = [(t-start_time, rx, tx) for t, rx, tx in packet_stats]
+    packet_stats = [(t - start_time, rx, tx) for t, rx, tx in packet_stats]
     packet_stats_str = json.dumps(packet_stats).encode("utf-8")
     compressed = gzip.compress(packet_stats_str, compresslevel=9)
     compressed_packet_stats_str = base64.b64encode(compressed).decode("utf-8")
