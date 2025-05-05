@@ -76,7 +76,7 @@ ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
 
 optimizer = ml.Optimizer(layers)
 n_correct, loss = optimizer.reveal_correctness(
-    samples, labels, batch_size, running=False
+    samples, labels, batch_size, running=True
 )
 accuracy = n_correct / len(samples)
 print_ln("Accuracy:%s", accuracy)
