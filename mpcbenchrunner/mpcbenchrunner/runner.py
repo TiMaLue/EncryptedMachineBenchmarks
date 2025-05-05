@@ -217,6 +217,7 @@ def run_protocol(params: BenchParameters, container: Container, volumes: Volumes
     )
     if params.scheduler_config_path:
         docker_exec_cmd += f" {params.scheduler_config_path}"
+    logger.debug("Executing docker cmd: %s", docker_exec_cmd)
 
     exit_code = os.system(f"docker exec -i {container.id} {docker_exec_cmd}")
     # res = container.exec_run(docker_exec_cmd,
@@ -270,7 +271,7 @@ if __name__ == "__main__":
         input_file_path,
         output_file_path,
     )
-    logger.debug("Benchmark params: %s", params)
+    logger.debug("Benchmark params: %s", params.params)
     cont = None
     try:
         raise_on_signal()
