@@ -176,6 +176,10 @@ def resolve_programm_name(target_params: TargetParams):
         return "SimpleLogisticReg"
     if "thesis_lenet5" in target_params.scenario.lower():
         return "thesis_lenet5"
+    else:
+        raise ValueError(
+            f"Program name could not be resolved for scenario: {target_params.scenario}"
+        )
 
 
 def resolve_mpsdpz_proto(target_params: TargetParams) -> Protocol:
@@ -211,7 +215,9 @@ def compile_prog(
     assert exit_code == 0
 
 
-def run_mpspdz_measure_time(target_params: TargetParams, dataset_size) -> float:
+def run_mpspdz_measure_time(
+    target_params: TargetParams, dataset_size, scheduler_config_path: str
+) -> float:
     proto = resolve_mpsdpz_proto(target_params)
     prog = resolve_programm_name(target_params)
     if proto.party_num == -3:
@@ -223,6 +229,9 @@ def run_mpspdz_measure_time(target_params: TargetParams, dataset_size) -> float:
         raise ValueError(
             f"Expected at least {proto.party_num} parties. Got {target_params.world_size}"
         )
+    # compile.py includes program args in the compiled program name, thus we append the program args to the program name for execution
+    if scheduler_config_path:
+        prog = "-".join([prog, scheduler_config_path.replace("/", "_")])
     cmd = f"{MP_SPDZ_HOME}/Scripts/{proto.script} {prog} -OF predictions"
     os.environ["PLAYERS"] = str(target_params.world_size)
     print(f"Run command: {cmd}")
@@ -279,7 +288,9 @@ def start(target_params: TargetParams, output_path: str, scheduler_config_path: 
     print("Compiling prog.")
     compile_prog(target_params, dataset_size, scheduler_config_path)
     print("Starting mpspedz benchmark.")
-    inference_time = run_mpspdz_measure_time(target_params, dataset_size)
+    inference_time = run_mpspdz_measure_time(
+        target_params, dataset_size, scheduler_config_path
+    )
     print("Calculating accuracy.")
     # acc = measure_acc(labels, dataset_size)
     acc, loss, num_correct, acc_plain = read_acc()
