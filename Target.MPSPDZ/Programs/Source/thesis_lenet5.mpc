@@ -12,9 +12,9 @@ from torch.utils.data import Dataset, Subset
 # load config
 program.options_from_args()
 config = configparser.ConfigParser()
-config.read("/scheduler/config.ini")
-# print_ln("Reading config: %s", program.args[1])
-# config.read(program.args[1])
+# config.read("/scheduler/config.ini")
+print_ln("Reading config: %s", program.args[1])
+config.read(program.args[1])
 
 # dataset_size = int(os.environ["DATASET_SIZE"])
 # batch_size = int(os.environ["BATCH_SIZE"])
