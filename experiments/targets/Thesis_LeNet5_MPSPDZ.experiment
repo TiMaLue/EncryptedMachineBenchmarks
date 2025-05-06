@@ -5,7 +5,7 @@ keyfields = scenario:varchar(500),target:varchar(500),protocol:varchar(500),worl
 
 scenario = thesis_lenet5
 target = mpspdz
-protocol = spdz2k-party.x, semi-party.x, semi2k-party.x
+protocol = mascot.x ,spdz2k-party.x, semi-party.x, semi2k-party.x
 world_size = 2, 3, 4
 batch_size = 1, 50
 tc_delay= -1, 1, 2, 5, 15, 50
