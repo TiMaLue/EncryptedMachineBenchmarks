@@ -40,7 +40,7 @@ else:
     partial_samples = ds.data[indices]
     partial_labels = ds.targets[indices]
     # normalize to [0,1] before input
-    samples = sfix.input_tensor_via(0, partial_samples / 255, binary=True)
+    samples = sfix.input_tensor_via(0, partial_samples / 255.0, binary=True)
     labels = sint.input_tensor_via(0, partial_labels, one_hot=True, binary=True)
 
 # load model and read into MP-SPDZ
@@ -64,13 +64,13 @@ with torch.no_grad():
         # print(plain_data)
         plain_inputs, plain_labels = plain_data
         outputs = lenet(plain_inputs)
-        _, predicted = torch.max(outputs, 1)
+        _, predicted = torch.max(outputs.data, 1)
         total += plain_labels.size(0)
         correct += (predicted == plain_labels).sum().item()
 
 print_ln(f"PlaintextAcc:{correct / total}")
 
-layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
+layers = ml.layers_from_torch(lenet, samples.shape, batch_size, input_via=0)
 
 ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
 
