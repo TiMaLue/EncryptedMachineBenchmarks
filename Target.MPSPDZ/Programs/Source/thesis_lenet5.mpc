@@ -1,7 +1,7 @@
 from Compiler import ml
 from Compiler.types import sfix, sint
 import torch
-from Models.LeNet5 import LeNet5_MPSPDZ as LeNet5
+from Models.LeNet5 import LeNet5
 import configparser
 import os
 from torchvision.datasets import MNIST
