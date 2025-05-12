@@ -48,7 +48,10 @@ lenet = LeNet5()
 save_path = "".join(
     [config["Models"]["SaveDir"], lenet.model_name, config["Models"]["Postfix"]]
 )
-lenet.load_state_dict(torch.load(save_path, weights_only=True))
+# use map_location to load models that were trained with CUDA/on GPU
+lenet.load_state_dict(
+    torch.load(save_path, weights_only=True, map_location=torch.device("cpu"))
+)
 
 # test model in plaintext first
 test_loader = torch.utils.data.DataLoader(
