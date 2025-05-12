@@ -40,7 +40,7 @@ else:
     partial_samples = ds.data[indices]
     partial_labels = ds.targets[indices]
     # normalize to [0,1] before input
-    samples = sfix.input_tensor_via(0, partial_samples / 255.0, binary=True)
+    samples = sfix.input_tensor_via(0, partial_samples / 255, binary=True)
     labels = sint.input_tensor_via(0, partial_labels, one_hot=True, binary=True)
 
 # load model and read into MP-SPDZ
