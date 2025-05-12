@@ -70,7 +70,7 @@ with torch.no_grad():
 
 print_ln(f"PlaintextAcc:{correct / total}")
 
-layers = ml.layers_from_torch(lenet, samples.shape, batch_size)
+layers = ml.layers_from_torch(lenet, samples.shape, batch_size, input_via=0)
 
 ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
 
