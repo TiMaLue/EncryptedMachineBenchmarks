@@ -30,7 +30,12 @@ COPY --from=initc3/mpir:55fe6a9 /usr/local/mpir/share/info/* /usr/local/share/in
 
 ENV MP_SPDZ_HOME /usr/src/MP-SPDZ
 WORKDIR $MP_SPDZ_HOME
-RUN git clone --depth 1 --branch scheduler https://github.com/TiMaLue/MP-SPDZ .
+ARG USER=TiMaLue
+ARG REPO=MP-SPDZ
+ARG BRANCH=scheduler
+# Add head version of branch, to invalidate docker cache when MP-SPDZ head changes
+ADD https://api.github.com/repos/$USER/$REPO/git/refs/heads/$BRANCH version.json
+RUN git clone --depth 1 --branch $BRANCH https://github.com/$USER/$REPO .
 #RUN git submodule init
 #RUN git submodule update
 #
