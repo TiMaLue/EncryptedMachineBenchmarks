@@ -1,0 +1,87 @@
+from Compiler import ml
+from Compiler.types import sfix, sint
+import torch
+from Models.LeNet5 import LeNet5_MPSPDZ as LeNet5
+import configparser
+import os
+from torchvision.datasets import MNIST
+from torchvision import transforms
+import numpy as np
+from torch.utils.data import Dataset, Subset
+
+# load config
+program.options_from_args()
+config = configparser.ConfigParser()
+# config.read("/scheduler/config.ini")
+print_ln("Reading config: %s", program.args[1])
+config.read(program.args[1])
+
+# dataset_size = int(os.environ["DATASET_SIZE"])
+# batch_size = int(os.environ["BATCH_SIZE"])
+batch_size = 32
+dataset_size = 32
+if "notorch" in program.args:
+    # normalize to [0,1] before input
+    samples = sfix.Tensor([dataset_size, 28, 28])
+    labels = sint.Tensor([dataset_size, 1])
+    samples.input_from(0)
+    labels.input_from(0)
+
+else:
+    # data preprocessing
+    ds = MNIST(
+        root=config["Dataset"]["RootDir"],
+        train=False,
+        download=True,
+        transform=transforms.ToTensor(),
+    )
+    indices = np.arange(dataset_size)
+    partial_ds: Subset[Dataset[MNIST]] = Subset(ds, indices)
+    partial_samples = ds.data[indices]
+    partial_labels = ds.targets[indices]
+    # normalize to [0,1] before input
+    samples = sfix.input_tensor_via(0, partial_samples / 255, binary=True)
+    labels = sint.input_tensor_via(0, partial_labels, one_hot=True, binary=True)
+
+# load model and read into MP-SPDZ
+lenet = LeNet5()
+save_path = "".join(
+    [config["Models"]["SaveDir"], lenet.model_name, config["Models"]["Postfix"]]
+)
+lenet.load_state_dict(torch.load(save_path, weights_only=True))
+
+# test model in plaintext first
+test_loader = torch.utils.data.DataLoader(
+    partial_ds, batch_size=batch_size, shuffle=False
+)
+
+# test loop
+correct = 0
+total = 0
+
+with torch.no_grad():
+    for plain_data in test_loader:
+        # print(plain_data)
+        plain_inputs, plain_labels = plain_data
+        outputs = lenet(plain_inputs)
+        _, predicted = torch.max(outputs.data, 1)
+        total += plain_labels.size(0)
+        correct += (predicted == plain_labels).sum().item()
+
+print_ln(f"PlaintextAcc:{correct / total}")
+
+layers = ml.layers_from_torch(lenet, samples.shape, batch_size, input_via=0)
+
+ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
+
+optimizer = ml.Optimizer(layers)
+n_correct, loss = optimizer.reveal_correctness(
+    samples, labels, batch_size, running=True
+)
+accuracy = n_correct / len(samples)
+print_ln("Accuracy:%s", accuracy)
+print_ln("Loss:%s", loss)
+print_ln("Correct:%s", n_correct)
+# accuracy.print_plain()
+# probabilities = optimizer.eval(samples)
+# probabilities.print_reveal_nested(end='\n')
