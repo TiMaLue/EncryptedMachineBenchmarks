@@ -78,7 +78,7 @@ schedulerOpts = {
         {
             "layerIndices": np.arange(0, 10),
             "layerToReplace": "Sigmoid",
-            "replaceWith": "Sigmoid5Piece",
+            "replaceWith": "Sigmoid3Piece",
         }
     ]
 }
