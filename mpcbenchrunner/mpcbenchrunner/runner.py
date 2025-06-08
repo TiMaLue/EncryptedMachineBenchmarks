@@ -277,14 +277,11 @@ if __name__ == "__main__":
         raise_on_signal()
         cont, volumes = run_container(params)
         protocol_measurements = run_protocol(params, cont, volumes)
+        logger.debug(f"Raw protocol measurements: {protocol_measurements}")
         exec_package_log(cont)
         packet_stats = read_network_usage_measurements(volumes.packets_log_file_path)
         packet_stats = compress_packet_stats(packet_stats)
         update_with_packet_stats(protocol_measurements, packet_stats)
-        logger.debug(f"Raw protocol measurements: {protocol_measurements}")
-        logger.debug(
-            f"Unstructured protocol measurements: {cattrs.unstructure(protocol_measurements)}"
-        )
         with open(output_file_path, "w") as fp:
             json.dump(
                 cattrs.unstructure(protocol_measurements),
