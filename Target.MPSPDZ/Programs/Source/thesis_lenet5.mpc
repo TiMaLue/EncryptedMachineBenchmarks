@@ -84,7 +84,7 @@ schedulerOpts = {
 }
 
 layers = ml.layers_from_torch(
-    lenet, samples.shape, batch_size, schedulerOpts=schedulerOpts, input_via=0
+    lenet, samples.shape, batch_size, schedulerOpts=schedulerOpts, input_via=1
 )
 print_ln(f"Imported Layers: {layers}")
 
