@@ -189,7 +189,10 @@ def resolve_mpsdpz_proto(target_params: TargetParams) -> Protocol:
 
 
 def compile_prog(
-    target_params: TargetParams, dataset_size: int, scheduler_config_path: str
+    target_params: TargetParams,
+    dataset_size: int,
+    scheduler_config_path: str,
+    scheduled_params: dict,
 ):
     prog = resolve_programm_name(target_params)
     proto = resolve_mpsdpz_proto(target_params)
@@ -210,6 +213,8 @@ def compile_prog(
     cmd += f" {prog}"
     if scheduler_config_path:
         cmd += f" {scheduler_config_path}"
+    if scheduled_params:
+        cmd += f" {scheduled_params}"
     print(f"Compile command: {cmd}")
     exit_code = exec(cmd)
     assert exit_code == 0
@@ -281,12 +286,23 @@ def read_acc():
     return acc, loss, num_correct, acc_plain
 
 
-def start(target_params: TargetParams, output_path: str, scheduler_config_path: str):
-    print("Preparing inputs.")
-    features, labels = prepare_input_data(target_params)
-    dataset_size = len(labels)
+def start(
+    target_params: TargetParams,
+    output_path: str,
+    scheduler_config_path: str,
+    scheduled_params: dict,
+):
+    if scheduled_params.get("prepare_data"):
+        print("Preparing inputs.")
+        features, labels = prepare_input_data(target_params)
+        dataset_size = len(labels)
+    elif scheduled_params.get("dataset_size", 0) > 0:
+        dataset_size = scheduled_params["dataset_size"]
+    else:
+        dataset_size = 10
+        print("WARNING: No dataset size in scheduled parameters, defaulting to 10!")
     print("Compiling prog.")
-    compile_prog(target_params, dataset_size, scheduler_config_path)
+    compile_prog(target_params, dataset_size, scheduler_config_path, scheduled_params)
     print("Starting mpspedz benchmark.")
     inference_time = run_mpspdz_measure_time(
         target_params, dataset_size, scheduler_config_path
@@ -359,8 +375,8 @@ def load_from_params(str_params: dict[str, str], clz):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Expected 3 inputs got: {}".format(len(sys.argv) - 1))
+    if len(sys.argv) != 5:
+        print("Expected 4 inputs got: {}".format(len(sys.argv) - 1))
         exit(1)
     param_path = sys.argv[1]
     with open(param_path, "r") as fp:
@@ -371,9 +387,11 @@ if __name__ == "__main__":
     print("Running benchmark with params: " + json.dumps(params, indent=2))
     output_path = sys.argv[2]
     scheduler_config_path = sys.argv[3]
+    scheduled_params = json.loads(sys.argv[4])
     target_params = load_from_params(params, TargetParams)
     start(
         target_params,
         output_path=output_path,
         scheduler_config_path=scheduler_config_path,
+        scheduled_params=scheduled_params,
     )

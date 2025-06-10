@@ -197,7 +197,12 @@ def run_ping(container: Container):
     print(res)
 
 
-def run_protocol(params: BenchParameters, container: Container, volumes: Volumes):
+def run_protocol(
+    params: BenchParameters,
+    container: Container,
+    volumes: Volumes,
+    scheduled_params: dict,
+):
     runtime_params = dict()
     runtime_params.update(params.params)
     if params.mode_is_priv_inference:
@@ -217,6 +222,8 @@ def run_protocol(params: BenchParameters, container: Container, volumes: Volumes
     )
     if params.scheduler_config_path:
         docker_exec_cmd += f" {params.scheduler_config_path}"
+    if scheduled_params:
+        docker_exec_cmd += f" '{json.dumps(scheduled_params)}'"
     logger.debug("Executing docker cmd: %s", docker_exec_cmd)
 
     exit_code = os.system(f"docker exec -i {container.id} {docker_exec_cmd}")
@@ -260,8 +267,8 @@ def raise_on_signal():
 if __name__ == "__main__":
     from mpcbenchrunner.bench import update_with_packet_stats, BenchParameters
 
-    if len(argv) > 3:
-        print("Expected input output files as args.")
+    if len(argv) > 4:
+        print("Expected input output and scheduler files as args.")
         exit(1)
     input_file_path = argv[1]
     output_file_path = argv[2]
@@ -272,11 +279,15 @@ if __name__ == "__main__":
         output_file_path,
     )
     logger.debug("Benchmark params: %s", params.params)
+    scheduled_params = None
+    if len(argv) >= 4:
+        with open(argv[3], "r") as fp:
+            scheduled_params = json.load(fp)
     cont = None
     try:
         raise_on_signal()
         cont, volumes = run_container(params)
-        protocol_measurements = run_protocol(params, cont, volumes)
+        protocol_measurements = run_protocol(params, cont, volumes, scheduled_params)
         logger.debug(f"Raw protocol measurements: {protocol_measurements}")
         exec_package_log(cont)
         packet_stats = read_network_usage_measurements(volumes.packets_log_file_path)
