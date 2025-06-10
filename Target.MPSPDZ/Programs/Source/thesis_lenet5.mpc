@@ -1,13 +1,14 @@
+import configparser
+import json
+
+import numpy as np
+import torch
 from Compiler import ml
 from Compiler.types import sfix, sint
-import torch
 from Models.LeNet5 import LeNet5
-import configparser
-import os
-from torchvision.datasets import MNIST
-from torchvision import transforms
-import numpy as np
 from torch.utils.data import Dataset, Subset
+from torchvision import transforms
+from torchvision.datasets import MNIST
 
 # load config
 program.options_from_args()
@@ -73,18 +74,19 @@ with torch.no_grad():
 
 print_ln(f"PlaintextAcc:{correct / total}")
 
-schedulerOpts = {
-    "layerReplacement": [
-        {
-            "layerIndices": np.arange(0, 10),
-            "layerToReplace": "Sigmoid",
-            "replaceWith": "Sigmoid3Piece",
-        }
-    ]
-}
+# scheduled_params = {
+#     "layerReplacement": [
+#         {
+#             "layerIndices": np.arange(0, 10),
+#             "layerToReplace": "Sigmoid",
+#             "replaceWith": "Sigmoid3Piece",
+#         }
+#     ]
+# }
+scheduled_params = json.loads(program.args[2])
 
 layers = ml.layers_from_torch(
-    lenet, samples.shape, batch_size, schedulerOpts=schedulerOpts, input_via=1
+    lenet, samples.shape, batch_size, schedulerOpts=scheduled_params, input_via=1
 )
 print_ln(f"Imported Layers: {layers}")
 
