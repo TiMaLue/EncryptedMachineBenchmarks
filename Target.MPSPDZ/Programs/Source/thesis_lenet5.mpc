@@ -85,9 +85,10 @@ print_ln(f"PlaintextAcc:{correct / total}")
 #         }
 #     ]
 # }
+print_ln(f"scheduled_params: {scheduled_params}")
 
 layers = ml.layers_from_torch(
-    lenet, samples.shape, batch_size, schedulerOpts=scheduled_params, input_via=1
+    lenet, samples.shape, batch_size, scheduler_opts=scheduled_params, input_via=1
 )
 print_ln(f"Imported Layers: {layers}")
 
