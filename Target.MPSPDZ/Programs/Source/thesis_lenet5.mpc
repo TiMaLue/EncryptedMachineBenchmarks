@@ -9,6 +9,7 @@ from Models.LeNet5 import LeNet5
 from torch.utils.data import Dataset, Subset
 from torchvision import transforms
 from torchvision.datasets import MNIST
+from pathlib import Path
 
 # load config
 program.options_from_args()
@@ -31,7 +32,7 @@ if "notorch" in program.args:
 else:
     # data preprocessing
     ds = MNIST(
-        root=config["Dataset"]["RootDir"],
+        root=Path(config["Dataset"]["RootDir"]),
         train=False,
         download=True,
         transform=transforms.ToTensor(),
@@ -46,8 +47,8 @@ else:
 
 # load model and read into MP-SPDZ
 lenet = LeNet5()
-save_path = "".join(
-    [config["Models"]["SaveDir"], lenet.model_name, config["Models"]["Postfix"]]
+save_path = Path(config["Models"]["SaveDir"]).joinpath(
+    "".join([lenet.model_name, config["Models"]["Postfix"]])
 )
 # use map_location to load models that were trained with CUDA/on GPU
 lenet.load_state_dict(
