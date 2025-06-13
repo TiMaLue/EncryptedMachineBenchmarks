@@ -17,6 +17,7 @@ config = configparser.ConfigParser()
 # config.read("/scheduler/config.ini")
 print_ln("Reading config: %s", program.args[1])
 config.read(program.args[1])
+scheduled_params = json.loads(json.dumps(program.args[2]))
 
 # dataset_size = int(os.environ["DATASET_SIZE"])
 # batch_size = int(os.environ["BATCH_SIZE"])
@@ -84,7 +85,6 @@ print_ln(f"PlaintextAcc:{correct / total}")
 #         }
 #     ]
 # }
-scheduled_params = json.loads(program.args[2])
 
 layers = ml.layers_from_torch(
     lenet, samples.shape, batch_size, schedulerOpts=scheduled_params, input_via=1

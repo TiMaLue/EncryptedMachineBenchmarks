@@ -223,7 +223,8 @@ def run_protocol(
     if params.scheduler_config_path:
         docker_exec_cmd += f" {params.scheduler_config_path}"
     if scheduled_params:
-        docker_exec_cmd += f" '{json.dumps(scheduled_params)}'"
+        scheduled_params_json = json.dumps(scheduled_params)
+        docker_exec_cmd += f" '{scheduled_params_json}'"
     logger.debug("Executing docker cmd: %s", docker_exec_cmd)
 
     exit_code = os.system(f"docker exec -i {container.id} {docker_exec_cmd}")
