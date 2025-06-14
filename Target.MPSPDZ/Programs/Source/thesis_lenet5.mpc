@@ -17,7 +17,8 @@ config = configparser.ConfigParser()
 # config.read("/scheduler/config.ini")
 print_ln("Reading config: %s", program.args[1])
 config.read(program.args[1])
-scheduled_params = json.loads(json.dumps(program.args[2]))
+print_ln("Scheduled params: %s", program.args[2])
+# scheduled_params = json.loads(program.args[2])
 
 # dataset_size = int(os.environ["DATASET_SIZE"])
 # batch_size = int(os.environ["BATCH_SIZE"])
@@ -76,15 +77,15 @@ with torch.no_grad():
 
 print_ln(f"PlaintextAcc:{correct / total}")
 
-# scheduled_params = {
-#     "layerReplacement": [
-#         {
-#             "layerIndices": np.arange(0, 10),
-#             "layerToReplace": "Sigmoid",
-#             "replaceWith": "Sigmoid3Piece",
-#         }
-#     ]
-# }
+scheduled_params = {
+    "layer_replacement": [
+        {
+            "layer_indices": np.arange(0, 10),
+            "layer_to_replace": "Sigmoid",
+            "replace_with": "Sigmoid3Piece",
+        }
+    ]
+}
 print_ln(f"scheduled_params: {scheduled_params}")
 
 layers = ml.layers_from_torch(
