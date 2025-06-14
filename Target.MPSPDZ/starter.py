@@ -214,14 +214,17 @@ def compile_prog(
     if scheduler_config_path:
         cmd += f" {scheduler_config_path}"
     if scheduled_params:
-        cmd += f" {scheduled_params}"
+        cmd += f" {json.dumps(scheduled_params)}"
     print(f"Compile command: {cmd}")
     exit_code = exec(cmd)
     assert exit_code == 0
 
 
 def run_mpspdz_measure_time(
-    target_params: TargetParams, dataset_size, scheduler_config_path: str
+    target_params: TargetParams,
+    dataset_size,
+    scheduler_config_path: str,
+    scheduled_params: dict,
 ) -> float:
     proto = resolve_mpsdpz_proto(target_params)
     prog = resolve_programm_name(target_params)
@@ -237,6 +240,10 @@ def run_mpspdz_measure_time(
     # compile.py includes program args in the compiled program name, thus we append the program args to the program name for execution
     if scheduler_config_path:
         prog = "-".join([prog, scheduler_config_path.replace("/", "_")])
+    if scheduled_params:
+        prog += "-" + "-".join(
+            json.dumps(scheduled_params).replace("/", "_").split(" ")
+        )
     cmd = f"{MP_SPDZ_HOME}/Scripts/{proto.script} {prog} -OF predictions"
     os.environ["PLAYERS"] = str(target_params.world_size)
     print(f"Run command: {cmd}")
@@ -305,7 +312,7 @@ def start(
     compile_prog(target_params, dataset_size, scheduler_config_path, scheduled_params)
     print("Starting mpspedz benchmark.")
     inference_time = run_mpspdz_measure_time(
-        target_params, dataset_size, scheduler_config_path
+        target_params, dataset_size, scheduler_config_path, scheduled_params
     )
     print("Calculating accuracy.")
     # acc = measure_acc(labels, dataset_size)
