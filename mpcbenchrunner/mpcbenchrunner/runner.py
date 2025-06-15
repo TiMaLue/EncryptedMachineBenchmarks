@@ -18,7 +18,7 @@ logger = logging.getLogger()
 
 
 class Volumes:
-    def __init__(self, params: BenchParameters):
+    def __init__(self, params: BenchParameters, scheduled_params_path: str = ""):
         self.__packets_log = tempfile.NamedTemporaryFile(
             delete=Settings.delete_temp_files
         )
@@ -34,6 +34,7 @@ class Volumes:
         else:
             self.__model_path = None
             self.__dataset_path = None
+        self.__scheduled_params_file_path = scheduled_params_path
 
     @property
     def packets_log_file_path(self) -> str:
@@ -46,6 +47,10 @@ class Volumes:
     @property
     def runtime_params_file_path(self) -> str:
         return self.__runtime_params.name
+
+    @property
+    def scheduled_params_file_path(self) -> str:
+        return self.__scheduled_params_file_path
 
     @property
     def packets_log_cnt_file_path(self) -> str:
@@ -66,6 +71,10 @@ class Volumes:
     @property
     def datasets_cnt_dir_path(self) -> str:
         return "/datasets"
+
+    @property
+    def scheduled_params_cnt_file_path(self) -> str:
+        return "/scheduled_params.json"
 
     @property
     def mount_options(self) -> dict:
@@ -92,6 +101,11 @@ class Volumes:
             mounts[self.__dataset_path] = {
                 "bind": self.datasets_cnt_dir_path  # , 'mode': 'ro'
             }
+        if self.__scheduled_params_file_path:
+            mounts[self.__scheduled_params_file_path] = {
+                "bind": self.scheduled_params_cnt_file_path,
+                "mode": "ro",
+            }
         return mounts
 
     def __repr__(self):
@@ -114,8 +128,8 @@ def get_tc_env_vars(params: BenchParameters) -> dict:
     return vars
 
 
-def run_container(params) -> (Container, Volumes):
-    v = Volumes(params)
+def run_container(params, scheduled_params_file_path) -> (Container, Volumes):
+    v = Volumes(params, scheduled_params_file_path)
     packets_log = tempfile.NamedTemporaryFile(delete=False)
     cont_env_vars = dict()
     cont_env_vars.update(get_tc_env_vars(params))
@@ -201,7 +215,7 @@ def run_protocol(
     params: BenchParameters,
     container: Container,
     volumes: Volumes,
-    scheduled_params: dict,
+    scheduled_params_path: str,
 ):
     runtime_params = dict()
     runtime_params.update(params.params)
@@ -222,9 +236,8 @@ def run_protocol(
     )
     if params.scheduler_config_path:
         docker_exec_cmd += f" {params.scheduler_config_path}"
-    if scheduled_params:
-        scheduled_params_json = json.dumps(scheduled_params)
-        docker_exec_cmd += f" '{scheduled_params_json}'"
+    if scheduled_params_path:
+        docker_exec_cmd += f" '{volumes.scheduled_params_cnt_file_path}'"
     logger.debug("Executing docker cmd: %s", docker_exec_cmd)
 
     exit_code = os.system(f"docker exec -i {container.id} {docker_exec_cmd}")
@@ -280,15 +293,17 @@ if __name__ == "__main__":
         output_file_path,
     )
     logger.debug("Benchmark params: %s", params.params)
-    scheduled_params = None
+    scheduled_params_path = ""
     if len(argv) >= 4:
-        with open(argv[3], "r") as fp:
-            scheduled_params = json.load(fp)
+        scheduled_params_path = argv[3]
+        logger.debug("Scheduled params file: %s", scheduled_params_path)
     cont = None
     try:
         raise_on_signal()
-        cont, volumes = run_container(params)
-        protocol_measurements = run_protocol(params, cont, volumes, scheduled_params)
+        cont, volumes = run_container(params, scheduled_params_path)
+        protocol_measurements = run_protocol(
+            params, cont, volumes, scheduled_params_path
+        )
         logger.debug(f"Raw protocol measurements: {protocol_measurements}")
         exec_package_log(cont)
         packet_stats = read_network_usage_measurements(volumes.packets_log_file_path)
