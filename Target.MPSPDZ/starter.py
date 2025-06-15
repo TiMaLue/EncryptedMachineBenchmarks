@@ -297,6 +297,8 @@ def start(
     scheduler_config_path: str,
     scheduled_params_path: str,
 ):
+    # config = configparser.ConfigParser()
+    # config.read(scheduler_config_path)
     with open(scheduled_params_path, "r") as fp:
         scheduled_params = json.load(fp)
     if scheduled_params.get("prepare_data"):
@@ -329,6 +331,8 @@ def start(
     print("Finished benchmark. Measurements: " + json.dumps(measurements, indent=4))
     with open(output_path, "w") as fp:
         json.dump(measurements, fp)
+    # if config["Output"]["FullProgramOutput"]:
+    #     shutil.copyfile("/predictions-P0-0", "/bench_data/thesis_lenet5/output/")
 
 
 def __env_var_name_of_attr(clazz: Type, attr_name: str, prefix: str) -> str:

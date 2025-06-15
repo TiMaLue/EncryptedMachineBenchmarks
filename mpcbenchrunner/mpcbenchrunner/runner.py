@@ -35,6 +35,9 @@ class Volumes:
             self.__model_path = None
             self.__dataset_path = None
         self.__scheduled_params_file_path = scheduled_params_path
+        self.__full_program_output_file_path = (
+            "/bench_data/thesis_lenet5/output/full-output"
+        )
 
     @property
     def packets_log_file_path(self) -> str:
@@ -51,6 +54,10 @@ class Volumes:
     @property
     def scheduled_params_file_path(self) -> str:
         return self.__scheduled_params_file_path
+
+    @property
+    def full_program_output_file_path(self) -> str:
+        return self.__full_program_output_file_path
 
     @property
     def packets_log_cnt_file_path(self) -> str:
@@ -75,6 +82,10 @@ class Volumes:
     @property
     def scheduled_params_cnt_file_path(self) -> str:
         return "/scheduled_params.json"
+
+    @property
+    def full_program_output_cnt_file_path(self) -> str:
+        return "/wd/predictions-P0-0"
 
     @property
     def mount_options(self) -> dict:
@@ -105,6 +116,11 @@ class Volumes:
             mounts[self.__scheduled_params_file_path] = {
                 "bind": self.scheduled_params_cnt_file_path,
                 "mode": "ro",
+            }
+        if self.__full_program_output_file_path:
+            mounts[self.__full_program_output_file_path] = {
+                "bind": self.full_program_output_cnt_file_path,
+                "mode": "rw",
             }
         return mounts
 
