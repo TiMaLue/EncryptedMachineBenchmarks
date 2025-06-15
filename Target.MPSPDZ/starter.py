@@ -1,5 +1,7 @@
 #!/usr/local/bin/python3
 
+import configparser
+import shutil
 import json
 import sys
 import os
@@ -295,10 +297,11 @@ def start(
     target_params: TargetParams,
     output_path: str,
     scheduler_config_path: str,
+    experiment_id: str,
     scheduled_params_path: str,
 ):
-    # config = configparser.ConfigParser()
-    # config.read(scheduler_config_path)
+    config = configparser.ConfigParser()
+    config.read(scheduler_config_path)
     with open(scheduled_params_path, "r") as fp:
         scheduled_params = json.load(fp)
     if scheduled_params.get("prepare_data"):
@@ -331,8 +334,8 @@ def start(
     print("Finished benchmark. Measurements: " + json.dumps(measurements, indent=4))
     with open(output_path, "w") as fp:
         json.dump(measurements, fp)
-    # if config["Output"]["FullProgramOutput"]:
-    #     shutil.copyfile("/predictions-P0-0", "/bench_data/thesis_lenet5/output/")
+    if config["Output"]["FullProgramOutput"]:
+        shutil.copyfile("/predictions-P0-0", f"/output/full-output-{experiment_id}")
 
 
 def __env_var_name_of_attr(clazz: Type, attr_name: str, prefix: str) -> str:
@@ -388,8 +391,8 @@ def load_from_params(str_params: dict[str, str], clz):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
-        print("Expected 4 inputs got: {}".format(len(sys.argv) - 1))
+    if len(sys.argv) != 6:
+        print("Expected 5 inputs got: {}".format(len(sys.argv) - 1))
         exit(1)
     param_path = sys.argv[1]
     with open(param_path, "r") as fp:
@@ -400,11 +403,13 @@ if __name__ == "__main__":
     print("Running benchmark with params: " + json.dumps(params, indent=2))
     output_path = sys.argv[2]
     scheduler_config_path = sys.argv[3]
-    scheduled_params_path = sys.argv[4]
+    experiment_id = sys.argv[4]
+    scheduled_params_path = sys.argv[5]
     target_params = load_from_params(params, TargetParams)
     start(
         target_params,
         output_path=output_path,
         scheduler_config_path=scheduler_config_path,
+        experiment_id=experiment_id,
         scheduled_params_path=scheduled_params_path,
     )

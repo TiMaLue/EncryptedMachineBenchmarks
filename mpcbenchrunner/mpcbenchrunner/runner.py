@@ -46,7 +46,7 @@ class Volumes:
         if is_full_output:
             if experiment_id:
                 self.__full_program_output_file_path = (
-                    f"/bench_data/thesis_lenet5/output/full-output-{experiment_id}"
+                    "/bench_data/thesis_lenet5/output/"
                 )
             else:
                 self.__full_program_output_file_path = tempfile.NamedTemporaryFile(
@@ -109,7 +109,7 @@ class Volumes:
 
     @property
     def full_program_output_cnt_file_path(self) -> str:
-        return "/wd/predictions-P0-0"
+        return "/output"
 
     @property
     def mount_options(self) -> dict:
@@ -258,6 +258,7 @@ def run_protocol(
     params: BenchParameters,
     container: Container,
     volumes: Volumes,
+    experiment_id: str,
     scheduled_params_path: str,
 ):
     runtime_params = dict()
@@ -279,6 +280,8 @@ def run_protocol(
     )
     if params.scheduler_config_path:
         docker_exec_cmd += f" {volumes.scheduler_cnt_config_path}"
+    if experiment_id:
+        docker_exec_cmd += f" {experiment_id}"
     if scheduled_params_path:
         docker_exec_cmd += f" '{volumes.scheduled_params_cnt_file_path}'"
     logger.debug("Executing docker cmd: %s", docker_exec_cmd)
@@ -354,7 +357,7 @@ if __name__ == "__main__":
             params, scheduler_config, experiment_id, scheduled_params_path
         )
         protocol_measurements = run_protocol(
-            params, cont, volumes, scheduled_params_path
+            params, cont, volumes, experiment_id, scheduled_params_path
         )
         logger.debug(f"Raw protocol measurements: {protocol_measurements}")
         exec_package_log(cont)
