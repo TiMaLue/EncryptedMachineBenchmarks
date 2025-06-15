@@ -335,7 +335,8 @@ def start(
     with open(output_path, "w") as fp:
         json.dump(measurements, fp)
     if config["Output"]["FullProgramOutput"]:
-        shutil.copyfile("/predictions-P0-0", f"/output/full-output-{experiment_id}")
+        print(f"CWD: {os.getcwd()}")
+        shutil.copyfile("/wd/predictions-P0-0", "/output/")
 
 
 def __env_var_name_of_attr(clazz: Type, attr_name: str, prefix: str) -> str:
