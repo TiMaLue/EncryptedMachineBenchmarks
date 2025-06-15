@@ -1,3 +1,4 @@
+import configparser
 import json
 import logging
 import os
@@ -18,7 +19,13 @@ logger = logging.getLogger()
 
 
 class Volumes:
-    def __init__(self, params: BenchParameters, scheduled_params_path: str = ""):
+    def __init__(
+        self,
+        params: BenchParameters,
+        is_full_output: bool = False,
+        experiment_id: str = "",
+        scheduled_params_path: str = "",
+    ):
         self.__packets_log = tempfile.NamedTemporaryFile(
             delete=Settings.delete_temp_files
         )
@@ -34,10 +41,19 @@ class Volumes:
         else:
             self.__model_path = None
             self.__dataset_path = None
+        self.__scheduler_config_path = params.scheduler_config_path
         self.__scheduled_params_file_path = scheduled_params_path
-        self.__full_program_output_file_path = (
-            "/bench_data/thesis_lenet5/output/full-output"
-        )
+        if is_full_output:
+            if experiment_id:
+                self.__full_program_output_file_path = (
+                    f"/bench_data/thesis_lenet5/output/full-output-{experiment_id}"
+                )
+            else:
+                self.__full_program_output_file_path = tempfile.NamedTemporaryFile(
+                    delete=Settings.delete_temp_files
+                ).name
+        else:
+            self.__full_program_output_file_path = ""
 
     @property
     def packets_log_file_path(self) -> str:
@@ -50,6 +66,10 @@ class Volumes:
     @property
     def runtime_params_file_path(self) -> str:
         return self.__runtime_params.name
+
+    @property
+    def scheduler_config_path(self) -> str:
+        return self.__scheduler_config_path
 
     @property
     def scheduled_params_file_path(self) -> str:
@@ -78,6 +98,10 @@ class Volumes:
     @property
     def datasets_cnt_dir_path(self) -> str:
         return "/datasets"
+
+    @property
+    def scheduler_cnt_config_path(self) -> str:
+        return "/scheduler/config.ini"
 
     @property
     def scheduled_params_cnt_file_path(self) -> str:
@@ -144,8 +168,11 @@ def get_tc_env_vars(params: BenchParameters) -> dict:
     return vars
 
 
-def run_container(params, scheduled_params_file_path) -> (Container, Volumes):
-    v = Volumes(params, scheduled_params_file_path)
+def run_container(
+    params, scheduler_config, experiment_id, scheduled_params_file_path
+) -> (Container, Volumes):
+    is_full_output = scheduler_config["Output"]["FullProgramOutput"]
+    v = Volumes(params, is_full_output, experiment_id, scheduled_params_file_path)
     packets_log = tempfile.NamedTemporaryFile(delete=False)
     cont_env_vars = dict()
     cont_env_vars.update(get_tc_env_vars(params))
@@ -251,7 +278,7 @@ def run_protocol(
         f" {volumes.runtime_measurements_cnt_file_path}"
     )
     if params.scheduler_config_path:
-        docker_exec_cmd += f" {params.scheduler_config_path}"
+        docker_exec_cmd += f" {volumes.scheduler_cnt_config_path}"
     if scheduled_params_path:
         docker_exec_cmd += f" '{volumes.scheduled_params_cnt_file_path}'"
     logger.debug("Executing docker cmd: %s", docker_exec_cmd)
@@ -297,7 +324,7 @@ def raise_on_signal():
 if __name__ == "__main__":
     from mpcbenchrunner.bench import update_with_packet_stats, BenchParameters
 
-    if len(argv) > 4:
+    if len(argv) < 3:
         print("Expected input output and scheduler files as args.")
         exit(1)
     input_file_path = argv[1]
@@ -309,14 +336,23 @@ if __name__ == "__main__":
         output_file_path,
     )
     logger.debug("Benchmark params: %s", params.params)
+    scheduler_config = configparser.ConfigParser()
+    logger.debug(f"Reading config: {params.scheduler_config_path}")
+    scheduler_config.read(params.scheduler_config_path)
     scheduled_params_path = ""
+    experiment_id = ""
     if len(argv) >= 4:
-        scheduled_params_path = argv[3]
+        experiment_id = argv[3]
+        logger.info(f"Experiment ID set to: {experiment_id}")
+    if len(argv) >= 5:
+        scheduled_params_path = argv[4]
         logger.debug("Scheduled params file: %s", scheduled_params_path)
     cont = None
     try:
         raise_on_signal()
-        cont, volumes = run_container(params, scheduled_params_path)
+        cont, volumes = run_container(
+            params, scheduler_config, experiment_id, scheduled_params_path
+        )
         protocol_measurements = run_protocol(
             params, cont, volumes, scheduled_params_path
         )
