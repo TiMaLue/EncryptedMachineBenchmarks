@@ -22,10 +22,13 @@ with open(program.args[2]) as scheduled_params_file:
     scheduled_params = json.load(scheduled_params_file)
 print_ln("Scheduled params: %s", scheduled_params)
 
+if scheduled_params["use_edabits"]:
+    program.use_edabit(True)
+
 # dataset_size = int(os.environ["DATASET_SIZE"])
 # batch_size = int(os.environ["BATCH_SIZE"])
-batch_size = 32
-dataset_size = 32
+batch_size = scheduled_params["batch_size"]
+dataset_size = scheduled_params["dataset_size"]
 if "notorch" in program.args:
     # normalize to [0,1] before input
     samples = sfix.Tensor([dataset_size, 28, 28])
