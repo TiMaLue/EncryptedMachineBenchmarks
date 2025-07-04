@@ -1,4 +1,4 @@
-import configparser
+import tomllib
 import json
 
 import numpy as np
@@ -13,10 +13,11 @@ from pathlib import Path
 
 # load config
 program.options_from_args()
-config = configparser.ConfigParser()
 # config.read("/scheduler/config.ini")
-print_ln("Reading config: %s", program.args[1])
-config.read(program.args[1])
+config_path = program.args[1]
+print_ln("Reading config: %s", config_path)
+with open(config_path, "rb") as fp:
+  config = tomllib.load(fp)
 
 with open(program.args[2]) as scheduled_params_file:
     scheduled_params = json.load(scheduled_params_file)
@@ -44,7 +45,7 @@ else:
         download=True,
         transform=transforms.ToTensor(),
     )
-    random_seed = int(config["Dataset"]["RandomSeed"])
+    random_seed = config["Dataset"]["RandomSeed"]
     print(f"Shuffling with random seed: {random_seed}")
     rng = np.random.default_rng(seed=random_seed)
     rng.shuffle(ds.data.numpy())
@@ -103,7 +104,7 @@ layers = ml.layers_from_torch(
 )
 print_ln(f"Imported Layers: {layers}")
 
-ml.set_n_threads(int(config["MP_SPDZ"]["NumThreads"]))
+ml.set_n_threads(config["MP_SPDZ"]["NumThreads"])
 
 optimizer = ml.Optimizer(layers)
 n_correct, loss = optimizer.reveal_correctness(

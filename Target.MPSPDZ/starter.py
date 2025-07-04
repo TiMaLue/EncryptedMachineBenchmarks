@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-import configparser
+import tomllib
 import shutil
 import json
 import sys
@@ -300,11 +300,11 @@ def start(
     experiment_id: str,
     scheduled_params_path: str,
 ):
-    config = configparser.ConfigParser()
-    config.read(scheduler_config_path)
+    with open(scheduler_config_path, "rb") as fp:
+        config = tomllib.load(fp)
     with open(scheduled_params_path, "r") as fp:
         scheduled_params = json.load(fp)
-    if config["Dataset"].getboolean("PrepareData"):
+    if config["Dataset"]["PrepareData"]:
         print("Preparing inputs.")
         features, labels = prepare_input_data(target_params)
         dataset_size = len(labels)

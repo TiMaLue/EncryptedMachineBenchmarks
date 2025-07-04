@@ -1,4 +1,4 @@
-import configparser
+import tomllib
 import json
 import logging
 import os
@@ -339,9 +339,9 @@ if __name__ == "__main__":
         output_file_path,
     )
     logger.debug("Benchmark params: %s", params.params)
-    scheduler_config = configparser.ConfigParser()
     logger.debug(f"Reading config: {params.scheduler_config_path}")
-    scheduler_config.read(params.scheduler_config_path)
+    with open(params.scheduler_config_path, "rb") as fp:
+        scheduler_config = tomllib.load(fp)
     scheduled_params_path = ""
     experiment_id = ""
     if len(argv) >= 4:
