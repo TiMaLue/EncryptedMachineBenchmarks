@@ -1,0 +1,23 @@
+[Models]
+SaveDir = "/model"
+Postfix = ".pth"
+SaveModel = true
+
+[Dataset]
+RootDir = "/datasets"
+PrepareData = false
+RandomSeed = 1337
+
+[MP_SPDZ]
+NumThreads = 8
+
+[Output]
+FullProgramOutput = true
+
+[Scheduler]
+LayerIdsToReplace = [1, 4]
+LayerTypesToReplace = ["Sigmoid"]
+ReplaceWith = ["Sigmoid3Piece", "Sigmoid5Piece", "ReLU"]
+DatasetSize = [32, 64]
+BatchSize = [32]
+useEdabits = [true, false]
