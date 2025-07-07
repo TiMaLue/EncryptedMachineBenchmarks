@@ -101,7 +101,7 @@ class Volumes:
 
     @property
     def scheduler_cnt_config_path(self) -> str:
-        return "/scheduler/config.toml"
+        return "/scheduler/config.ini"
 
     @property
     def scheduled_params_cnt_file_path(self) -> str:
