@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-import tomlkit
+import tomllib
 import shutil
 import json
 import sys
@@ -301,7 +301,7 @@ def start(
     scheduled_params_path: str,
 ):
     with open(scheduler_config_path, "rb") as fp:
-        config = tomlkit.load(fp)
+        config = tomllib.load(fp)
     with open(scheduled_params_path, "r") as fp:
         scheduled_params = json.load(fp)
     if config["Dataset"]["PrepareData"]:

@@ -4,4 +4,3 @@ numpy
 jupyter
 torch
 torchvision
-tomlkit

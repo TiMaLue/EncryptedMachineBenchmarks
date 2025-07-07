@@ -1,4 +1,4 @@
-import tomlkit
+import tomllib
 import json
 
 import numpy as np
@@ -17,7 +17,7 @@ program.options_from_args()
 config_path = program.args[1]
 print_ln("Reading config: %s", config_path)
 with open(config_path, "rb") as fp:
-  config = tomlkit.load(fp)
+  config = tomllib.load(fp)
 
 with open(program.args[2]) as scheduled_params_file:
     scheduled_params = json.load(scheduled_params_file)

@@ -1,4 +1,4 @@
-import tomlkit
+import tomllib
 import json
 import logging
 import os
@@ -341,7 +341,7 @@ if __name__ == "__main__":
     logger.debug("Benchmark params: %s", params.params)
     logger.debug(f"Reading config: {params.scheduler_config_path}")
     with open(params.scheduler_config_path, "rb") as fp:
-        scheduler_config = tomlkit.load(fp)
+        scheduler_config = tomllib.load(fp)
     scheduled_params_path = ""
     experiment_id = ""
     if len(argv) >= 4:
