@@ -324,7 +324,7 @@ def raise_on_signal():
     signal.signal(signal.SIGTERM, raise_err)
 
 
-if __name__ == "__main__":
+def main(argv):
     from mpcbenchrunner.bench import update_with_packet_stats, BenchParameters
 
     if len(argv) < 3:
@@ -375,3 +375,7 @@ if __name__ == "__main__":
         if cont is not None:
             exit_code = os.system(f"docker stop -t 0 {cont.id}")
             logger.info("Docker stop issued.")
+
+
+if __name__ == "__main__":
+    main(argv)
