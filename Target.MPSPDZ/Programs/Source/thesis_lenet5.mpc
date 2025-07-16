@@ -46,9 +46,9 @@ else:
     )
     random_seed = int(config["Dataset"]["RandomSeed"])
     print(f"Shuffling with random seed: {random_seed}")
-    rng = np.random.default_rng(seed=random_seed)
-    rng.shuffle(ds.data.numpy())
-    rng.shuffle(ds.targets.numpy())
+    # rng = np.random.default_rng(seed=random_seed)
+    # rng.shuffle(ds.data.numpy())
+    # rng.shuffle(ds.targets.numpy())
     indices = np.arange(dataset_size)
     partial_ds: Subset[Dataset[MNIST]] = Subset(ds, indices)
     partial_samples = ds.data[indices]
