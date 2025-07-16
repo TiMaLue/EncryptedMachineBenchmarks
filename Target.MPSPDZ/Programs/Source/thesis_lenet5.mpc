@@ -44,18 +44,29 @@ else:
         download=True,
         transform=transforms.ToTensor(),
     )
+    # shuffle dataset before splitting
     random_seed = int(config["Dataset"]["RandomSeed"])
     print(f"Shuffling with random seed: {random_seed}")
-    # rng = np.random.default_rng(seed=random_seed)
-    # rng.shuffle(ds.data.numpy())
-    # rng.shuffle(ds.targets.numpy())
+    rng = np.random.default_rng(seed=random_seed)
+    data_list = []
+    for feature_target_tuple in zip(ds.data.numpy(), ds.targets.numpy()):
+        data_list.append(feature_target_tuple)
+    rng.shuffle(data_list)
     indices = np.arange(dataset_size)
-    partial_ds: Subset[Dataset[MNIST]] = Subset(ds, indices)
-    partial_samples = ds.data[indices]
-    partial_labels = ds.targets[indices]
+    # partial_ds: Subset[Dataset[MNIST]] = Subset(ds, indices)
+    # partial_samples = ds.data[indices]
+    # partial_labels = ds.targets[indices]
+    print(f"First feat_target tuple: {data_list[0]}")
+    partial_samples = []
+    partial_labels = []
+    for feature_target_tuple in data_list:
+        partial_samples.append(feature_target_tuple[0])
+        partial_labels.append(feature_target_tuple[1])
     # normalize to [0,1] before input
-    samples = sfix.input_tensor_via(0, partial_samples / 255, binary=True)
-    labels = sint.input_tensor_via(0, partial_labels, one_hot=True, binary=True)
+    samples = sfix.input_tensor_via(0, np.array(partial_samples) / 255, binary=True)
+    labels = sint.input_tensor_via(
+        0, np.array(partial_labels), one_hot=True, binary=True
+    )
 
 # load model and read into MP-SPDZ
 lenet = LeNet5()
