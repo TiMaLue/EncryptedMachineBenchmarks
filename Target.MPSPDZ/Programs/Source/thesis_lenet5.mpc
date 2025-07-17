@@ -6,7 +6,7 @@ import torch
 from Compiler import ml
 from Compiler.types import sfix, sint
 from Models.LeNet5 import LeNet5
-from torch.utils.data import Dataset, Subset
+from torch.utils.data import Dataset, Subset, RandomSampler
 from torchvision import transforms
 from torchvision.datasets import MNIST
 from pathlib import Path
@@ -25,8 +25,7 @@ print_ln("Scheduled params: %s", scheduled_params)
 if scheduled_params["use_edabits"]:
     program.use_edabit(True)
 
-# dataset_size = int(os.environ["DATASET_SIZE"])
-# batch_size = int(os.environ["BATCH_SIZE"])
+partial_ds = None
 batch_size = scheduled_params["batch_size"]
 dataset_size = scheduled_params["dataset_size"]
 if "notorch" in program.args:
@@ -47,23 +46,17 @@ else:
     # shuffle dataset before splitting
     random_seed = int(config["Dataset"]["RandomSeed"])
     print(f"Shuffling with random seed: {random_seed}")
-    rng = np.random.default_rng(seed=random_seed)
+    gen = torch.Generator()
+    gen.manual_seed(random_seed)
     data_list = []
-    for feature_target_tuple in zip(ds.data.numpy(), ds.targets.numpy()):
-        data_list.append(feature_target_tuple)
-    rng.shuffle(data_list)
-    indices = np.arange(dataset_size)
-    # partial_ds: Subset[Dataset[MNIST]] = Subset(ds, indices)
-    # partial_samples = ds.data[indices]
-    # partial_labels = ds.targets[indices]
-    print(f"First feat_target tuple: {data_list[0]}")
-    partial_samples = []
-    partial_labels = []
-    for feature_target_tuple in data_list:
-        partial_samples.append(feature_target_tuple[0])
-        partial_labels.append(feature_target_tuple[1])
+    indices = torch.randint(0, len(ds.data), (dataset_size,), generator=gen)
+    partial_ds = Subset(ds, indices.tolist())
+    partial_samples = ds.data[indices]
+    partial_labels = ds.targets[indices]
+    print(f"First input: {partial_samples[0]}")
+    print(f"First label: {partial_labels[0]}")
     # normalize to [0,1] before input
-    samples = sfix.input_tensor_via(0, np.array(partial_samples) / 255, binary=True)
+    samples = sfix.input_tensor_via(0, partial_samples / 255, binary=True)
     labels = sint.input_tensor_via(
         0, np.array(partial_labels), one_hot=True, binary=True
     )
@@ -79,36 +72,29 @@ lenet.load_state_dict(
 )
 
 # test model in plaintext first
-test_loader = torch.utils.data.DataLoader(
-    partial_ds, batch_size=batch_size, shuffle=False
-)
+if partial_ds is not None:
+    test_loader = torch.utils.data.DataLoader(
+        partial_ds,
+        batch_size=batch_size,
+        shuffle=False,
+    )
 
-# test loop
-correct = 0
-total = 0
+    # test loop
+    correct = 0
+    total = 0
 
-with torch.no_grad():
-    for plain_data in test_loader:
-        # print(plain_data)
-        plain_inputs, plain_labels = plain_data
-        outputs = lenet(plain_inputs)
-        _, predicted = torch.max(outputs.data, 1)
-        total += plain_labels.size(0)
-        correct += (predicted == plain_labels).sum().item()
+    with torch.no_grad():
+        for plain_data in test_loader:
+            # print(plain_data)
+            plain_inputs, plain_labels = plain_data
+            outputs = lenet(plain_inputs)
+            _, predicted = torch.max(outputs.data, 1)
+            total += plain_labels.size(0)
+            correct += (predicted == plain_labels).sum().item()
 
-print_ln(f"PlaintextAcc:{correct / total}")
+    print_ln(f"PlaintextAcc:{correct / total}")
 
-# scheduled_params = {
-#     "layer_replacement": [
-#         {
-#             "layer_indices": np.arange(0, 10),
-#             "layer_to_replace": "Sigmoid",
-#             "replace_with": "Sigmoid3Piece",
-#         }
-#     ]
-# }
-# print_ln(f"scheduled_params: {scheduled_params}")
-
+# read model as input of player 1
 layers = ml.layers_from_torch(
     lenet, samples.shape, batch_size, scheduler_opts=scheduled_params, input_via=1
 )
@@ -124,6 +110,3 @@ accuracy = n_correct / len(samples)
 print_ln("Accuracy:%s", accuracy)
 print_ln("Loss:%s", loss)
 print_ln("Correct:%s", n_correct)
-# accuracy.print_plain()
-# probabilities = optimizer.eval(samples)
-# probabilities.print_reveal_nested(end='\n')
