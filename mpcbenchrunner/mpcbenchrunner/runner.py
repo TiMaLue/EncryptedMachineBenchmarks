@@ -46,7 +46,7 @@ class Volumes:
         if is_full_output:
             if experiment_id:
                 self.__full_program_output_file_path = (
-                    "/bench_data/thesis_lenet5/output/"
+                    "/bench_data/thesis_lenet5/output/full/"
                 )
             else:
                 self.__full_program_output_file_path = tempfile.NamedTemporaryFile(
